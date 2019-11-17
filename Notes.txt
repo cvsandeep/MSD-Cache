@@ -1,11 +1,20 @@
 Track and plan our project notes
 
-If your team wants to be making good progress you should have code working already that
-	- reads command line arguments to determine what mode to run in, what trace file to read, and whether to enable your debugging statements (optional)
-	- reads/parses a trace file
-	- if debugging turned on, outputs what you’ve just parsed to ensure it’s working
-	- maybe keeps a running count of the number of reads and writes and prints that out in a (partial) summary (rest to be completed when you’ve got a cache)
-
-and your team should be thinking about and maybe writing down
-	- outline of a test plan
-	- sketch of data structures needed to represent the cache
+Todo pick list
+	- reads command line arguments - Should be having 2 arguments 
+		1. Point of a file to read a trace file
+			what trace file to read
+				keeps a running count of the number of reads and writes and prints that out in a (partial) summary
+		2. Point of a file to read a Config file (
+			what mode to run in 
+			Update the logging level of debugging
+	- Update config parametrs and read a new line in trace file
+		1. Need to list out the type of configurations we need and create a config file
+		      	read the logging level of debugging in config file and should be able to print the logs
+				if debugging turned on, outputs what you’ve just parsed to ensure it’s working
+			Write a function to display with parameters( Log_level, function_name, message)
+			
+			
+	-Sketech of the above with intials and data Structuresto represent data and instruction cache.
+	
+	- All of us need to discuss outline of the plan forword.
