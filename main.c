@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "cache_memory.h"
 
 FILE *trace_file, *config_file;
 
