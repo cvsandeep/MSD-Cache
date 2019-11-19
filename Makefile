@@ -7,7 +7,7 @@ OBJ    = main.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 cache: main.o
-	$(CC) -o $@ $^ $(CFLAGS)
+	$(CC) -o Release/$@ $^ $(CFLAGS)
 
 clean: 
 	rm -f *.o *~ 
