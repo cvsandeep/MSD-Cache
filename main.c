@@ -29,5 +29,9 @@ int main(int argc ,char *argv[]) {
 		printf("Wrong config file path exiting ..\n");
 		exit(EXIT_FAILURE);
 	}
+
+	while(1){
+
+	}
 return EXIT_SUCCESS;
 }
