@@ -24,10 +24,10 @@ struct CACHE_SET
 
 struct L1_CACHE
 {
-	struct CACHE_SET set[255]
+	struct CACHE_SET set[255];
 };
 
 struct L2_CACHE
 {
-	struct CACHE_SET set[512]
+	struct CACHE_SET set[512];
 };
