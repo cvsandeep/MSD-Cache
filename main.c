@@ -36,8 +36,8 @@ int main(int argc ,char *argv[]) {
 	//Info to use structures
 	struct CACHE_LINE w0[4];
 	//Iterate through ways from 0 t0 sizeof(w0)/sizeof(struct CACHE_LINE)
-	printf("Number of CACHE_LINE=%ld",sizeof(w0)/sizeof(struct CACHE_LINE));
-	printf("Number of offsets in CACHE_LINE=%ld",sizeof(w0[0].offset)/sizeof(int));
+	printf("Number of CACHE_LINE=%d",sizeof(w0)/sizeof(struct CACHE_LINE));
+	printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
 
 	while(UpdateTraceOperation()){
 		UpdateConfig();
