@@ -8,6 +8,8 @@
 #ifndef CACHE_CONTROL_H_
 #define CACHE_CONTROL_H_
 
+#include <stdio.h>
+
 FILE *trace_file, *config_file;
 
 int UpdateTraceOperation(void);
