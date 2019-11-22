@@ -12,6 +12,7 @@
 #include <math.h>
 #include "cache_memory.h"
 #include "cache_control.h"
+#include "cache_operation.h"
 
 extern FILE *trace_file, *config_file;
 extern unsigned int op, addr;
@@ -42,7 +43,38 @@ int main(int argc ,char *argv[]) {
 	//printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
 
 	while(UpdateTraceOperation()){
-		printf("operation %d address %d\n",op,addr);
+		printf("\n operation %d address 0x%x ",op,addr);
+		switch (op) {
+			case READ_DATA:
+				printf("operation READ_DATA");
+				break;
+			case WRITE_DATA:
+				printf("operation WRITE_DATA");
+				break;
+			case READ_INSTRUCTION:
+				printf("operation READ_INSTRUCTION");
+				break;
+			case SNOOPED_INVALIDATE:
+				printf("operation SNOOPED_INVALIDATE");
+				break;
+			case SNOOPED_READ:
+				printf("operation SNOOPED_READ");
+				break;
+			case SNOOPED_WRITE:
+				printf("operation SNOOPED_WRITE");
+				break;
+			case SNOOPED_READ_X:
+				printf("operation SNOOPED_READ_X");
+				break;
+			case CLEAR_AND_RESET:
+				printf("operation CLEAR_AND_RESET");
+				break;
+			case PRINT_CACHE_LINE:
+				printf("operation PRINT_CACHE_LINE");
+				break;
+			default:
+				printf("Invalid");
+		}
 	}
 return EXIT_SUCCESS;
 }

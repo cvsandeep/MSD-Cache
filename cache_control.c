@@ -39,3 +39,4 @@ void UpdateConfig(void){
 	}
 	fclose(config_file);
 }
+

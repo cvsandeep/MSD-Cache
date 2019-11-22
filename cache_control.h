@@ -10,6 +10,17 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+#define READ_DATA 0
+#define WRITE_DATA 1
+#define READ_INSTRUCTION 2
+#define SNOOPED_INVALIDATE 3
+#define SNOOPED_READ 4
+#define SNOOPED_WRITE 5
+#define SNOOPED_READ_X 6
+#define CLEAR_AND_RESET 8
+#define PRINT_CACHE_LINE 9
 
 FILE *trace_file, *config_file;
 unsigned int op, addr;
