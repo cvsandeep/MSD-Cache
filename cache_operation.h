@@ -40,4 +40,6 @@ unsigned int GetSnoopResult(unsigned int Address);
 void PutSnoopResult(unsigned int Address, unsigned SnoopResult);
 void MessageToCache(char Message, unsigned int Address);
 
+void UpdatePLRU(int set, int w);
+int WhichWay(int set);
 #endif /* CACHE_OPERATION_H_ */

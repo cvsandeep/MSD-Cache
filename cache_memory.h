@@ -3,15 +3,18 @@
  *
  *  Created on: Nov 19, 2019
  *      Author: venksand
+ *
  */
+
+#define BYTE_LINES 64
 
 struct CACHE_LINE
 {
 	int valid;
 	int dirty;
 	int tag;
-	//int index;
-	int offset[64];
+	int index;
+	int offset; //int offset[BYTE_LINES]; to store 64 Bytes of data
 };
 
 struct CACHE_SET_4_WAY
@@ -30,12 +33,24 @@ struct CACHE_SET_8_WAY
 				//May need to change depends on per way and set
 };
 
+/*
+ * Last level Cache Capacity = 16MB = 2^4 * 2^20/2^6 = 2^18 cache lines
+ * 8 way set associative = 2^15 sets
+ * Write allocate policy with PLRU replacement
+ * MESI Protocol for cache coherence
+ */
+struct L2_CACHE
+{
+	struct CACHE_SET_8_WAY set[32768];
+};
+
+/*
+ * 4 way set associative
+ * Write once policy:
+ * 		The first write to a line is write through
+ * 		Subsequent writes to the same line is write back.
+ */
 struct L1_CACHE
 {
 	struct CACHE_SET_4_WAY set[255];
-};
-
-struct L2_CACHE
-{
-	struct CACHE_SET_8_WAY set[512];
 };

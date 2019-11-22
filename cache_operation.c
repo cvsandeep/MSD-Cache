@@ -41,3 +41,13 @@ void MessageToCache(char Message, unsigned int Address)
 {
 	printf("L2: %d 0x%x\n", Message, Address);
 }
+
+void UpdatePLRU(int set, int w)
+{
+
+}
+
+int WhichWay(int set)
+{
+	return 1;
+}

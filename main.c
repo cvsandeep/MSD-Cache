@@ -1,5 +1,6 @@
 /******************************************
  ********* ECE 485/585 Final Project ******
+ ********* Simulate L2 unified cache ******
  * main .c
  * 
  *  Author: Team
