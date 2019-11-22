@@ -14,6 +14,7 @@
 #include "cache_control.h"
 
 extern FILE *trace_file, *config_file;
+extern unsigned int op, addr;
 
 int main(int argc ,char *argv[]) {
 	if (argc < 2) {
@@ -33,15 +34,15 @@ int main(int argc ,char *argv[]) {
 	}
 
 	UpdateConfig();
+	printf("Debug level is %d\n",debug);
 	//Info to use structures
-	struct CACHE_LINE w0[4];
+	//struct CACHE_LINE w0[4];
 	//Iterate through ways from 0 t0 sizeof(w0)/sizeof(struct CACHE_LINE)
-	printf("Number of CACHE_LINE=%d",sizeof(w0)/sizeof(struct CACHE_LINE));
-	printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
+	//printf("Number of CACHE_LINE=%d",sizeof(w0)/sizeof(struct CACHE_LINE));
+	//printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
 
 	while(UpdateTraceOperation()){
-		UpdateConfig();
-
+		printf("operation %d address %d\n",op,addr);
 	}
 return EXIT_SUCCESS;
 }

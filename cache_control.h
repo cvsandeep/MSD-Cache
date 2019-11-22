@@ -9,8 +9,11 @@
 #define CACHE_CONTROL_H_
 
 #include <stdio.h>
+#include <string.h>
 
 FILE *trace_file, *config_file;
+unsigned int op, addr;
+unsigned int debug;
 
 int UpdateTraceOperation(void);
 void UpdateConfig(void);

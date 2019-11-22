@@ -14,7 +14,8 @@ int UpdateTraceOperation(void){
 	char *line;
 	size_t len=0;
 	if(getline(&line,&len, trace_file) != -1 ){
-		printf("\n%s",line);
+		op = (unsigned int) strtol(strtok(line," "), 0, 16);
+		addr = (unsigned int) strtol(strtok(0 ," "), 0, 16);
 		return 1;
 	} else {
 		fclose(trace_file);
@@ -27,8 +28,14 @@ int UpdateTraceOperation(void){
  */
 void UpdateConfig(void){
 	char *line;
+	char *config;
 	size_t len=0;
+
 	while(getline(&line,&len, config_file) != -1 ){
-		printf("\n%s",line);
+		//printf("%s\n",line);
+		config = strtok(line," ");
+		if(strcmp(config,"debug") == 0)
+		debug = (unsigned int) strtol(strtok(0 ," "), 0, 16);
 	}
+	fclose(config_file);
 }
