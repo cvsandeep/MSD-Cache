@@ -14,6 +14,7 @@
 #include "cache_memory.h"
 #include "cache_control.h"
 #include "cache_operation.h"
+#include "logger.h"
 
 extern FILE *trace_file, *config_file;
 extern unsigned int op, addr;
@@ -36,6 +37,7 @@ int main(int argc ,char *argv[]) {
 	}
 
 	UpdateConfig();
+	readData();
 	printf("Debug level is %d\n",debug);
 	//L2.set->way = malloc(sizeof(struct  CACHE_LINE) * associativity);
 	//L2.set->PLRU = malloc(sizeof(struct  int) *7);
@@ -51,34 +53,45 @@ int main(int argc ,char *argv[]) {
 		switch (op) {
 			case READ_DATA:
 				printf("operation READ_DATA");
+				readData();
 				break;
 			case WRITE_DATA:
 				printf("operation WRITE_DATA");
+				writeData();
 				break;
 			case READ_INSTRUCTION:
 				printf("operation READ_INSTRUCTION");
+				ReadInstruction();
 				break;
 			case SNOOPED_INVALIDATE:
 				printf("operation SNOOPED_INVALIDATE");
+				SnoopedInvalidate();
 				break;
 			case SNOOPED_READ:
 				printf("operation SNOOPED_READ");
+				SnoopedRead();
 				break;
 			case SNOOPED_WRITE:
 				printf("operation SNOOPED_WRITE");
+				SnoopedWrite();
 				break;
 			case SNOOPED_READ_X:
 				printf("operation SNOOPED_READ_X");
+				SnoopedReadX();
 				break;
 			case CLEAR_AND_RESET:
 				printf("operation CLEAR_AND_RESET");
+				ClearAndSet();
 				break;
 			case PRINT_CACHE_LINE:
 				printf("operation PRINT_CACHE_LINE");
+				PrintCacheLine();
 				break;
 			default:
 				printf("Invalid");
 		}
+
+		//Counters and Calculated the performance
 	}
 return EXIT_SUCCESS;
 }
