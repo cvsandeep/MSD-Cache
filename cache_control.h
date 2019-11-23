@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "cache_operation.h"
 
 #define READ_DATA 0
 #define WRITE_DATA 1
@@ -25,6 +26,7 @@
 FILE *trace_file, *config_file;
 unsigned int op, addr;
 unsigned int debug;
+unsigned int cache_lines, associativity,sets,line_size;
 
 int UpdateTraceOperation(void);
 void UpdateConfig(void);

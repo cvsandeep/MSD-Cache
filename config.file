@@ -1,1 +1,8 @@
 debug 2
+line_size 64
+associativity 8
+cache_lines 16
+inclusivity 1
+write_policy allocate 
+replacment_policy plru
+coherence mesi

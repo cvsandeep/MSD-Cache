@@ -9,7 +9,6 @@
 #define CACHE_OPERATION_H_
 
 #include <stdio.h>
-
 /*
  * These defines are from project description
  */

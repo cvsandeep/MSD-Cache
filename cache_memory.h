@@ -33,7 +33,16 @@ struct CACHE_SET_8_WAY
 				//May need to change depends on per way and set
 };
 
+struct CACHE_SET_N_WAY
+{
+	struct CACHE_LINE* way; //Associativity
+	int* PLRU; //May need to change depends on per way and set
+	int MESI[3];//Stores the state of MESI
+				//May need to change depends on per way and set
+};
+
 /*
+ * Assuming the name as L2 as we consider two level caches
  * Last level Cache Capacity = 16MB = 2^4 * 2^20/2^6 = 2^18 cache lines
  * 8 way set associative = 2^15 sets
  * Write allocate policy with PLRU replacement
@@ -52,5 +61,12 @@ struct L2_CACHE
  */
 struct L1_CACHE
 {
-	struct CACHE_SET_4_WAY set[255];
+	struct CACHE_SET_4_WAY set[8];
 };
+
+struct N_CACHE
+{
+	//struct CACHE_SET_N_WAY *set; For now 8 way
+	struct CACHE_SET_8_WAY *set;
+
+}L2;
