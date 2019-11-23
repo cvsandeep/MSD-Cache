@@ -10,9 +10,9 @@
  * Read each line from trace file and decode the operation and address
  */
 int UpdateTraceOperation(void){
-	char *line;
-	size_t len=0;
-	if(getline(&line,&len, trace_file) != -1 ){
+	char line[256];
+
+	if(fgets(line, sizeof(line), trace_file) ){
 		op = (unsigned int) strtol(strtok(line," "), 0, 16);
 		addr = (unsigned int) strtol(strtok(0 ," "), 0, 16);
 		return 1;
@@ -26,12 +26,10 @@ int UpdateTraceOperation(void){
  * Updates the Configuration by reading the config file.
  */
 void UpdateConfig(void){
-	char *line;
+	char line[256];
 	char *config;
-	size_t len=0;
 
-
-	while(getline(&line,&len, config_file) != -1 ){
+	while(fgets(line, sizeof(line), config_file)){
 		//printf("%s\n",line);
 		config = strtok(line," ");
 		if(strcmp(config,"debug") == 0)
