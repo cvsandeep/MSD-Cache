@@ -20,6 +20,8 @@ extern FILE *trace_file, *config_file;
 extern unsigned int op, addr;
 
 int main(int argc ,char *argv[]) {
+	debugLog(0, "", "Function Name \t \t Message\n");
+	//sdebugLog("---------------------------------------------------\n");
 	if (argc < 2) {
 		printf("Wrong number of arguments:\n Please provide the file paths for trace file and config file\n");
 		exit(EXIT_FAILURE);
@@ -49,7 +51,7 @@ int main(int argc ,char *argv[]) {
 	//printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
 
 	while(UpdateTraceOperation()){
-		printf("\n operation %d address 0x%x ",op,addr);
+		printf("\n operation %d address 0x%x\n ",op,addr);
 		switch (op) {
 			case READ_DATA:
 				printf("operation READ_DATA");

@@ -33,54 +33,54 @@ int WhichWay(int set)
 // Level 1
 void readData(void)
 {
-	debugLog(0,__func__,"                      operation READ_DATA");
+	debugLog(0,__func__,"operation READ_DATA");
 	//printf("operation READ_DATA");
 }
 
 void writeData(void)
 {
-	debugLog(0,__func__,"                     operation WRITE_DATA");
+	debugLog(0,__func__,"operation WRITE_DATA");
 	//printf("operation WRITE_DATA");
 }
 
 void ReadInstruction(void)
 {
-	debugLog(1,__func__,"               operation READ_INSTRUCTION");
+	debugLog(1,__func__,"operation READ_INSTRUCTION");
 	//printf("operation READ_INSTRUCTION");
 }
 
 void SnoopedInvalidate(void)
 {
-	debugLog(2, __func__, "           operation SNOOPED_INVALIDATE");
+	debugLog(2, __func__, "operation SNOOPED_INVALIDATE");
 	//printf("operation SNOOPED_INVALIDATE");
 }
 
 void SnoopedRead(void)
 {
-	debugLog(2, __func__, "                 operation SNOOPED_READ");
+	debugLog(2, __func__, "operation SNOOPED_READ");
 	//printf("operation SNOOPED_READ");
 }
 
 void SnoopedWrite(void)
 {
-	debugLog(2, __func__, "                operation SNOOPED_WRITE");
+	debugLog(2, __func__, "operation SNOOPED_WRITE");
 	//printf("operation SNOOPED_WRITE");
 }
 
 void SnoopedReadX(void)
 {
-	debugLog(2, __func__, "               operation SNOOPED_READ_X");
+	debugLog(2, __func__, "operation SNOOPED_READ_X");
 	//printf("operation SNOOPED_READ_X");
 }
 
 void ClearAndSet(void)
 {
-	debugLog(2, __func__, "               operation CLEAR_AND_RESET");
+	debugLog(2, __func__, "operation CLEAR_AND_RESET");
 	//printf("operation CLEAR_AND_RESET");
 }
 
 void PrintCacheLine(void)
 {
-	debugLog(2, __func__, "              operation PRINT_CACHE_LINE");
+	debugLog(2, __func__, "operation PRINT_CACHE_LINE");
 	//printf("operation PRINT_CACHE_LINE");
 }
