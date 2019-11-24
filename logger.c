@@ -19,7 +19,7 @@
  */
 #include "logger.h"
 
-void debugLog(int log_level, char *function_name, char *message)
+void debugLog(int log_level, const char *function_name, char *message)
 {
 	switch(log_level)
 	{
