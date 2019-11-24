@@ -21,7 +21,7 @@ extern unsigned int op, addr;
 
 int main(int argc ,char *argv[]) {
 	debugLog(0, "", "Function Name \t \t Message\n");
-	//sdebugLog("---------------------------------------------------\n");
+	//debugLog("---------------------------------------------------\n");
 	if (argc < 2) {
 		printf("Wrong number of arguments:\n Please provide the file paths for trace file and config file\n");
 		exit(EXIT_FAILURE);
