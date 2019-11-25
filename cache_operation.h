@@ -7,10 +7,13 @@
 
 #ifndef CACHE_OPERATION_H_
 #define CACHE_OPERATION_H_
-#include <stdio.h>
 
-void UpdatePLRU(int set, int w);
-int WhichWay(int set);
+#include <stdio.h>
+#include <stdlib.h>
+#include "logger.h"
+#include "cache_control.h"
+
+void DecodeAddress(void);
 void readData(void);
 void writeData(void);
 void ReadInstruction(void);
@@ -20,5 +23,7 @@ void SnoopedWrite(void);
 void SnoopedReadX(void);
 void ClearAndSet(void);
 void PrintCacheLine(void);
+void UpdatePLRU(int set, int w);
+int WhichWay(int set);
 
 #endif /* CACHE_OPERATION_H_ */

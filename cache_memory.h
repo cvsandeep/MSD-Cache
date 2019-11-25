@@ -44,13 +44,13 @@ struct CACHE_SET_N_WAY
 /*
  * Assuming the name as L2 as we consider two level caches
  * Last level Cache Capacity = 16MB = 2^4 * 2^20/2^6 = 2^18 cache lines
- * 8 way set associative = 2^15 sets
+ * 8 way set associative = 2^15 sets = 32768 sets
  * Write allocate policy with PLRU replacement
  * MESI Protocol for cache coherence
  */
 struct L2_CACHE
 {
-	struct CACHE_SET_8_WAY set[32768];
+	struct CACHE_SET_8_WAY set[16]; //Defaulting to 0
 };
 
 /*
@@ -61,7 +61,7 @@ struct L2_CACHE
  */
 struct L1_CACHE
 {
-	struct CACHE_SET_4_WAY set[8];
+	struct CACHE_SET_4_WAY set[2];
 };
 
 struct N_CACHE
