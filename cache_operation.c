@@ -19,28 +19,58 @@
  */
 
 #include "cache_operation.h"
+#include "bus_operation.h"
 #include <stdio.h>
 #include <math.h>
 
 unsigned int tag, set_index, offset;
+extern unsigned int cache_lines, associativity,sets,line_size;
 
 void DecodeAddress(void){
 	int lines = log2(line_size);
-	int sets = log2(cache_lines/associativity);
+	int set = log2(sets);
 	tag = addr; set_index = addr; offset = addr;
 
 	offset = offset & ((1 << lines) -1);
-	set_index = set_index >> lines & ((1<< sets) -1);
-	tag = tag >> (lines + sets) & ((1<< (32-lines+sets)) -1);
+	set_index = set_index >> lines & ((1<< set) -1);
+	tag = tag >> (lines + set) & ((1<< (32-lines+set)) -1);
 	printf("\n Address 0x%x ; Offset 0x%x; set_index 0x%x; tag 0x%x\n  ",addr,offset,set_index,tag);
 }
 
+void ReIntializeCache(void){
+	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
+}
 // Level 1
 void readData(void)
 {
 	char msgOut[1024];
+	int evict = 0, way=0;
 	sprintf(msgOut, "Reading at address 0x%x\n ",addr);
 	debugLog(1,__func__, msgOut);
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			if(L2.set[set_index].way[w].tag == tag) { //Check tag
+				debugLog(1,__func__, "Data found");
+				UpdatePLRU(set_index,w);
+				return; // Return data
+			}
+		} else {
+			if (evict == 0) {
+				evict = 1;
+				way = w;
+			}
+		}
+	}
+	debugLog(1,__func__, "Data not found");
+
+	if(evict) {
+		BusOperation(READ, addr, GetSnoopResult(addr)); //Send read command to bus
+		L2.set[set_index].way[way].valid = 1;
+		L2.set[set_index].way[way].tag = tag;
+	} else {
+		way = WhichWay(set_index);
+	}
+	UpdatePLRU(set_index,way);
 }
 
 void writeData(void)

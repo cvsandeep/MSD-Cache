@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "cache_operation.h"
+#include "cache_memory.h"
 
 #define READ_DATA 0
 #define WRITE_DATA 1
