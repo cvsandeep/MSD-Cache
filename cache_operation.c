@@ -44,7 +44,7 @@ void ReIntializeCache(void){
 void readData(void)
 {
 	char msgOut[1024];
-	int evict = 0, way=0;
+	int evict = 1, way=0;
 	sprintf(msgOut, "Reading at address 0x%x\n ",addr);
 	debugLog(1,__func__, msgOut);
 	for(int w = 0; w < associativity; w++){
@@ -55,8 +55,8 @@ void readData(void)
 				return; // Return data
 			}
 		} else {
-			if (evict == 0) {
-				evict = 1;
+			if (evict == 1) {
+				evict = 0;
 				way = w;
 			}
 		}
@@ -64,53 +64,117 @@ void readData(void)
 	debugLog(1,__func__, "Data not found");
 
 	if(evict) {
-		BusOperation(READ, addr, GetSnoopResult(addr)); //Send read command to bus
-		L2.set[set_index].way[way].valid = 1;
-		L2.set[set_index].way[way].tag = tag;
-	} else {
 		way = WhichWay(set_index);
 	}
+	L2.set[set_index].way[way].valid = 1;
+	L2.set[set_index].way[way].tag = tag;
+	BusOperation(READ, addr, GetSnoopResult(addr)); //Send read command to bus
 	UpdatePLRU(set_index,way);
 }
 
 void writeData(void)
 {
 	debugLog(1,__func__,"operation WRITE_DATA");
+	// PutSnoopResult
 }
 
 void ReadInstruction(void)
 {
 	debugLog(1,__func__,"operation READ_INSTRUCTION");
+	readData();
 }
 
 void SnoopedInvalidate(void)
 {
 	debugLog(2, __func__, "operation SNOOPED_INVALIDATE");
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			if(L2.set[set_index].way[w].tag == tag) { //Check tag
+				debugLog(1,__func__, "Data found");
+				L2.set[set_index].way[w].valid = 0; //Invalidating
+				//UpdatePLRU(set_index,w);
+				return; // Return data
+			}
+		}
+	}
 }
 
 void SnoopedRead(void)
 {
 	debugLog(2, __func__, "operation SNOOPED_READ");
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			if(L2.set[set_index].way[w].tag == tag) { //Check tag
+				debugLog(1,__func__, "Data found");
+				//L2.set[set_index].way[w].valid = 0; //Invalidating
+				//UpdatePLRU(set_index,w);
+				//Change mesi state
+				if(L2.set[set_index].way[w].dirty == 1){
+					PutSnoopResult(addr,HITM);
+				} else {
+					PutSnoopResult(addr,HIT);
+				}
+
+				return; // Return data
+			}
+		}
+	}
 }
 
 void SnoopedWrite(void)
 {
 	debugLog(2, __func__, "operation SNOOPED_WRITE");
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			if(L2.set[set_index].way[w].tag == tag) { //Check tag
+				debugLog(1,__func__, "Data found");
+				L2.set[set_index].way[w].valid = 0; //Invalidating
+				//UpdatePLRU(set_index,w);
+				// PutSnoopResult HITM
+				return; // Return data
+			}
+		}
+	}
 }
 
 void SnoopedReadX(void)
 {
 	debugLog(2, __func__, "operation SNOOPED_READ_X");
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			if(L2.set[set_index].way[w].tag == tag) { //Check tag
+				debugLog(1,__func__, "Data found");
+				L2.set[set_index].way[w].valid = 0; //Invalidating
+				//UpdatePLRU(set_index,w);
+				return; // Return data
+			}
+		}
+	}
 }
 
 void ClearAndSet(void)
 {
 	debugLog(2, __func__, "operation CLEAR_AND_RESET");
+	for (int set = 0; set < sets; set++)
+	for(int w = 0; w < associativity; w++){
+		L2.set[set].way[w].valid = 0; //Clearing all
+	}
 }
 
 void PrintCacheLine(void)
 {
+	char msgOut[1024];
 	debugLog(2, __func__, "operation PRINT_CACHE_LINE");
+	for (int set = 0; set < sets; set++)
+	for(int w = 0; w < associativity; w++){
+		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+			sprintf(msgOut, "Data at address 0x%x\n is valid ",addr);
+		}
+		else {
+			sprintf(msgOut, "Data at address 0x%x\n is not valid ",addr);
+		}
+		debugLog(1,__func__, msgOut);
+	}
 }
 
 
