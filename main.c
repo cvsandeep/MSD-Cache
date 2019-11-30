@@ -37,7 +37,7 @@ int main(int argc ,char *argv[]) {
 	printf("Debug level is %d\n",debug);
 	//L2.set->way = malloc(sizeof(struct  CACHE_LINE) * associativity);
 	//L2.set->PLRU = malloc(sizeof(struct  int) *7);
-	//L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
+	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
 	//Info to use structures
 	//struct CACHE_LINE w0[4];
 	//Iterate through ways from 0 t0 sizeof(w0)/sizeof(struct CACHE_LINE)
@@ -78,7 +78,34 @@ int main(int argc ,char *argv[]) {
 				printf("Invalid");
 		}
 
-		//Counters and Calculated the performance
 	}
-return EXIT_SUCCESS;
+	//Counters and Calculate the performance
+	int HitCount(void)
+	{
+		debugLog(1, __func__, "operation HIT_COUNT");
+		++hitCount;
+		return hitCount;
+	}
+	int HitEvictCount(void)
+	{
+		debugLog(1, __func__, "operation HIT_COUNT");
+		++hitEvictCount;
+		return hitEvictCount;
+	}
+	int MissCount(void)
+	{
+		debugLog(1, __func__, "operation MISS_COUNT");
+		++missCount;
+		return missCount;
+	}
+	int CachePerformance(void)
+	{
+		debugLog(1, __func__, "operation CACHE_PREFORMANCE");
+		hit_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
+		hit_evict_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
+		miss_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
+		printf("Performance Hits = %d, Hit&Evict = %d, Miss = %d\n",hit_percentage,hit_evict_percentage,miss_percentage);
+		return 0;
+	}
+	return EXIT_SUCCESS;
 }
