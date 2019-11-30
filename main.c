@@ -102,8 +102,8 @@ int main(int argc ,char *argv[]) {
 	{
 		debugLog(1, __func__, "operation CACHE_PREFORMANCE");
 		hit_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
-		hit_evict_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
-		miss_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
+		hit_evict_percentage = (hitCount + hitEvictCount + missCount)/hitEvictCount;
+		miss_percentage = (hitCount + hitEvictCount + missCount)/missCount;
 		printf("Performance Hits = %d, Hit&Evict = %d, Miss = %d\n",hit_percentage,hit_evict_percentage,miss_percentage);
 		return 0;
 	}
