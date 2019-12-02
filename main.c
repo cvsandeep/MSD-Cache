@@ -35,9 +35,9 @@ int main(int argc ,char *argv[]) {
 
 	UpdateConfig();
 	printf("Debug level is %d\n",debug);
+	ReIntializeCache();
 	//L2.set->way = malloc(sizeof(struct  CACHE_LINE) * associativity);
 	//L2.set->PLRU = malloc(sizeof(struct  int) *7);
-	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
 	//Info to use structures
 	//struct CACHE_LINE w0[4];
 	//Iterate through ways from 0 t0 sizeof(w0)/sizeof(struct CACHE_LINE)

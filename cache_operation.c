@@ -167,7 +167,7 @@ void PrintCacheLine(void)
 	debugLog(2, __func__, "operation PRINT_CACHE_LINE");
 	for (int set = 0; set < sets; set++)
 	for(int w = 0; w < associativity; w++){
-		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
+		if(L2.set[set].way[w].valid == 1) { //Check data is valid
 			sprintf(msgOut, "Data at address 0x%x\n is valid ",addr);
 		}
 		else {
