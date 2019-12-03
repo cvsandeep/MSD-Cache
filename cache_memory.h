@@ -12,6 +12,7 @@ struct CACHE_LINE
 {
 	int valid;
 	int dirty;
+	int MESI_state;
 	int tag;
 	int index;
 	int offset; //int offset[BYTE_LINES]; to store 64 Bytes of data
@@ -21,7 +22,7 @@ struct CACHE_SET_4_WAY
 {
 	struct CACHE_LINE way[4]; //Associativity
 	int PLRU[3]; //May need to change depends on per way and set
-	int MESI[3];//Stores the state of MESI
+	//int MESI[3];//Stores the state of MESI
 				//May need to change depends on per way and set
 };
 
@@ -29,7 +30,7 @@ struct CACHE_SET_8_WAY
 {
 	struct CACHE_LINE way[8]; //Associativity
 	int PLRU[7]; //May need to change depends on per way and set
-	int MESI[3];//Stores the state of MESI
+	//int MESI[3];//Stores the state of MESI
 				//May need to change depends on per way and set
 };
 

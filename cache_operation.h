@@ -28,6 +28,7 @@ void ClearAndSet(void);
 void PrintCacheLine(void);
 void UpdatePLRU(int set, int w);
 int WhichWay(int set);
+void UpdateMESIstate(int type);
 int HitCount(void);
 int MissCount(void);
 int HitEvictCount(void);
