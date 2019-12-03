@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "cache_operation.h"
+#include "counters_&_performance.h"
 
 extern FILE *trace_file, *config_file;
 extern unsigned int op;

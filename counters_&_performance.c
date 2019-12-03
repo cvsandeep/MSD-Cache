@@ -1,3 +1,12 @@
+/*
+ * 	counters_&_performance.c
+ *
+ * 	Author: Todd
+ *
+ *
+ */
+
+
 #include "counters_&_performance.h"
 
 void HitCount(void)
@@ -5,11 +14,6 @@ void HitCount(void)
 	debugLog(1, __func__, "operation HIT_COUNT");
 	++hitCount;
 }
-/*
- *
- *
- *
- */
 
 void HitModifiedLineCount(void)
 {
