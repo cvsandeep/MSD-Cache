@@ -111,8 +111,10 @@ void SnoopedRead(void)
 				//Change mesi state
 				if(L2.set[set_index].way[w].dirty == 1){
 					PutSnoopResult(addr,HITM);
+					HitModifiedLineCount();
 				} else {
 					PutSnoopResult(addr,HIT);
+					HitCount();
 				}
 
 				return; // Return data
@@ -131,6 +133,7 @@ void SnoopedWrite(void)
 				L2.set[set_index].way[w].valid = 0; //Invalidating
 				//UpdatePLRU(set_index,w);
 				// PutSnoopResult HITM
+				//HitModifiedLineCount();
 				return; // Return data
 			}
 		}
