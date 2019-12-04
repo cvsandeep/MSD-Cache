@@ -18,10 +18,14 @@
  * 10 - ALL
  */
 #include "logger.h"
+extern unsigned int debug;
 
 void debugLog(int log_level, const char *function_name, char *message)
 {
-	switch(log_level)
+	if (log_level <= debug){
+		printf("%s:%s\n",function_name,message);
+	}
+	/*switch(log_level)
 	{
 		case 0:
 		{
@@ -80,5 +84,5 @@ void debugLog(int log_level, const char *function_name, char *message)
 		}
 		default:
 			printf("Error in Logging Level\n");
-	}
+	}*/
 }

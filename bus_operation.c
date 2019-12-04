@@ -6,15 +6,18 @@
  */
 
 #include "bus_operation.h"
+#include "logger.h"
 
+char msgOut[2048];
 /*
  * Used to simulate a bus operation and to capture the snoop results of last
  * level caches of other processors
  */
 void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
 {
-	SnoopResult = GetSnoopResult(Address);
-	printf("BusOp: %d, Address:0x%x, Snoop Result:%d, \n", BusOp, Address,SnoopResult);
+	//SnoopResult = GetSnoopResult(Address);
+	sprintf(msgOut, "BusOp: %d, Address:0x%x, Snoop Result:%d", BusOp, Address,SnoopResult);
+	debugLog(0,__func__, msgOut);
 }
 
 /*
@@ -22,7 +25,8 @@ void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
  */
 unsigned int GetSnoopResult(unsigned int Address)
 {
-	printf("SnoopResult: Address 0x%x",Address);
+	sprintf(msgOut, "Address 0x%x",Address);
+	debugLog(0,__func__, msgOut);
 	return NOHIT;
 }
 
@@ -32,7 +36,8 @@ caches
 */
 void PutSnoopResult(unsigned int Address, unsigned int SnoopResult)
 {
-	printf("SnoopResult: Address 0x%x SnoopResult: %d\n", Address, SnoopResult);
+	sprintf(msgOut, "SnoopResult: Address 0x%x SnoopResult: %d", Address, SnoopResult);
+	debugLog(0,__func__, msgOut);
 }
 
 /*
@@ -40,5 +45,6 @@ Used to simulate communication to our upper level cache
 */
 void MessageToCache(char Message, unsigned int Address)
 {
-	printf("L2: %d 0x%x\n", Message, Address);
+	sprintf(msgOut, "L2: %d 0x%x", Message, Address);
+	debugLog(0,__func__, msgOut);
 }

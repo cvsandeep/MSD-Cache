@@ -19,9 +19,6 @@
 #define EXCLUSIVE 2
 #define MODEFIED 3
 
-unsigned int hitCount, hitEvictCount, missCount;
-unsigned int hit_percentage, hit_evict_percentage, miss_percentage;
-
 void DecodeAddress(void);
 void ReIntializeCache(void);
 void readData(void);
