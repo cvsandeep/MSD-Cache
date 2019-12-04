@@ -8,6 +8,7 @@
 
 
 #include "counters_&_performance.h"
+#include "cache_operation.h"
 
 void HitCount(void)
 {
@@ -31,15 +32,16 @@ void MissCount(void)
 {
 	debugLog(1, __func__, "operation MISS_COUNT");
 	++missCount;
+	//printf("miss count = %d",missCount);
 }
 
-int CachePerformance(void)
+void CachePerformance(void)
 {
 	debugLog(1, __func__, "operation CACHE_PREFORMANCE");
-	hit_percentage = (hitCount + hitModifiedLineCount + hitEvictCount + missCount)/hitCount;
-	hit_modified_percentage = (hitCount + hitModifiedLineCount + hitEvictCount + missCount)/hitModifiedLineCount;
-	hit_evict_percentage = (hitCount + hitModifiedLineCount + hitEvictCount + missCount)/hitEvictCount;
-	miss_percentage = (hitCount + hitModifiedLineCount + hitEvictCount + missCount)/missCount;
+	hit_percentage = hitCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
+	hit_modified_percentage = hitModifiedLineCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
+	hit_evict_percentage = hitEvictCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
+	miss_percentage = missCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
 	printf("Performance Hits = %d Percent, HitModifiedLine = %d Percent, Hit&Evict = %d Percent, Miss = %d Percent\n",hit_percentage,hit_modified_percentage,hit_evict_percentage,miss_percentage);
-	return 0;
+	//return 0;
 }

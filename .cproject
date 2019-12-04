@@ -205,13 +205,13 @@
         		
         <buildTargets>
             			
-            <target name="cache" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+            <target name="cache.exe" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                 				
                 <buildCommand>make</buildCommand>
                 				
                 <buildArguments/>
                 				
-                <buildTarget>cache</buildTarget>
+                <buildTarget>cache.exe</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
                 				

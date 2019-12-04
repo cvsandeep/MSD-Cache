@@ -20,6 +20,7 @@
 
 #include "cache_operation.h"
 #include "bus_operation.h"
+#include "counters_&_performance.h"
 #include <stdio.h>
 #include <math.h>
 

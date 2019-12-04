@@ -81,7 +81,10 @@ int main(int argc ,char *argv[]) {
 
 	}
 	//Counters and Calculate the performance
+	HitCount();				//Debug Function Calls
+	MissCount();			//''
+	HitEvictCount();		//''
+	HitModifiedLineCount(); //''
 	CachePerformance();		//function call to Performance report
-
 	return EXIT_SUCCESS;
 }
