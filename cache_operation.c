@@ -25,8 +25,10 @@
 
 unsigned int tag, set_index, offset;
 extern unsigned int cache_lines, associativity,sets,line_size;
+char msgOut[2048];
 
 void DecodeAddress(void){
+
 	int lines = log2(line_size);
 	int set = log2(sets);
 	tag = addr; set_index = addr; offset = addr;
@@ -34,10 +36,14 @@ void DecodeAddress(void){
 	offset = offset & ((1 << lines) -1);
 	set_index = set_index >> lines & ((1<< set) -1);
 	tag = tag >> (lines + set) & ((1<< (32-lines+set)) -1);
-	printf("\n Address 0x%x ; Offset 0x%x; set_index 0x%x; tag 0x%x\n  ",addr,offset,set_index,tag);
+	debugLog(1,__func__,"*******************************************************************");
+	sprintf(msgOut, "Address 0x%x ; Offset 0x%x; set_index 0x%x; tag 0x%x  ",addr,offset,set_index,tag);
+	debugLog(1,__func__, msgOut);
+	debugLog(1,__func__,"*******************************************************************");
 }
 
 void ReIntializeCache(void){
+	debugLog(2,__func__,"");
 	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
 }
 // Level 1
@@ -45,8 +51,7 @@ void readData(void)
 {
 	char msgOut[1024];
 	int evict = 1, way=0;
-	sprintf(msgOut, "Reading at address 0x%x\n ",addr);
-	debugLog(1,__func__, msgOut);
+	debugLog(2,__func__,"");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -65,7 +70,7 @@ void readData(void)
 			}
 		}
 	}
-	debugLog(1,__func__, "Data not found");
+	debugLog(1,__func__, "Data not found in the cache line");
 
 	if(evict) {
 		way = WhichWay(set_index);
@@ -73,7 +78,6 @@ void readData(void)
 	L2.set[set_index].way[way].valid = 1;
 	L2.set[set_index].way[way].tag = tag;
 	UpdateMESIstate(READ, way);
-
 	UpdatePLRU(set_index,way);
 }
 
@@ -81,8 +85,8 @@ void writeData(void)
 {
 	char msgOut[1024];
 	int w;
-	debugLog(1,__func__,"operation WRITE_DATA");
-	debugLog(1,__func__, msgOut);
+	debugLog(2,__func__,"");
+	//debugLog(1,__func__, msgOut);
 	for(w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -102,13 +106,13 @@ void writeData(void)
 
 void ReadInstruction(void)
 {
-	debugLog(1,__func__,"operation READ_INSTRUCTION");
+	debugLog(2,__func__,"");
 	readData();
 }
 
 void SnoopedInvalidate(void)
 {
-	debugLog(2, __func__, "operation SNOOPED_INVALIDATE");
+	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -123,7 +127,7 @@ void SnoopedInvalidate(void)
 
 void SnoopedRead(void)
 {
-	debugLog(2, __func__, "operation SNOOPED_READ");
+	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -139,7 +143,7 @@ void SnoopedRead(void)
 
 void SnoopedWrite(void)
 {
-	debugLog(2, __func__, "operation SNOOPED_WRITE");
+	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -154,7 +158,7 @@ void SnoopedWrite(void)
 
 void SnoopedReadX(void)
 {
-	debugLog(2, __func__, "operation SNOOPED_READ_X");
+	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -170,7 +174,7 @@ void SnoopedReadX(void)
 
 void ClearAndSet(void)
 {
-	debugLog(2, __func__, "operation CLEAR_AND_RESET");
+	debugLog(2, __func__, "");
 	for (int set = 0; set < sets; set++)
 	for(int w = 0; w < associativity; w++){
 		L2.set[set].way[w].valid = 0; //Clearing all
@@ -182,7 +186,7 @@ void ClearAndSet(void)
 void PrintCacheLine(void)
 {
 	char msgOut[1024];
-	debugLog(2, __func__, "operation PRINT_CACHE_LINE");
+	debugLog(2, __func__, "");
 	for (int set = 0; set < sets; set++) {
 		for(int w = 0; w < associativity; w++){
 			if(L2.set[set].way[w].valid == 1) { //Check data is valid
@@ -200,22 +204,24 @@ void PrintCacheLine(void)
 
 void UpdatePLRU(int set, int w)
 {
-
+	debugLog(2, __func__, "");
 }
 
 int WhichWay(int set)
 {
+	debugLog(2, __func__, "Evicting");
 	return 1;
 }
 
 void UpdateMESIstate(int type, int way)
 {
+	debugLog(2, __func__, "");
 	int state = L2.set[set_index].way[way].MESI_state;
 	switch (state) {
 		case INVALID:
 			if(type == READ) {
-				BusOperation(READ, addr, GetSnoopResult(addr)); //Send read command to bus
 				int res = GetSnoopResult(addr);
+				BusOperation(READ, addr, res); //Send read command to bus
 				if ( res == HIT) {
 					L2.set[set_index].way[way].MESI_state = SHARED;
 				} else if ( res == NOHIT) {
@@ -243,17 +249,20 @@ void UpdateMESIstate(int type, int way)
 }
 
 void VoidWay(int way) {
+	debugLog(2, __func__, "INVALIDATE");
 	BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
 	L2.set[set_index].way[way].valid = 0; //Invalidating
 	L2.set[set_index].way[way].dirty = 0; //Invalidating
 }
 
 void Flush(int way) {
+	debugLog(2, __func__, "");
 	BusOperation(WRITE, addr, GetSnoopResult(addr));
 }
 
 void UpdateMESIstateSnoop(int type, int way)
 {
+	debugLog(2, __func__, "");
 	int state = L2.set[set_index].way[way].MESI_state;
 	switch (state) {
 		case INVALID:

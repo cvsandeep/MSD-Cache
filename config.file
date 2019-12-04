@@ -1,4 +1,4 @@
-debug 0
+debug 2
 line_size 64
 associativity 8
 cache_lines 32
