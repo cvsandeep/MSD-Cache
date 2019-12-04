@@ -130,6 +130,7 @@ void SnoopedRead(void)
 				debugLog(1,__func__, "Data found");
 				UpdateMESIstateSnoop(READ,w);
 				//UpdatePLRU(set_index,w);
+
 				return; // Return data
 			}
 		}
@@ -259,12 +260,14 @@ void UpdateMESIstateSnoop(int type, int way)
 			break;
 		case SHARED:
 			PutSnoopResult(addr,HIT);
+			HitCount();
 			if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 			}
 			break;
 		case EXCLUSIVE:
 			PutSnoopResult(addr,HIT);
+			HitCount();
 			if(type == RWIM){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
@@ -274,6 +277,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			break;
 		case MODEFIED:
 			PutSnoopResult(addr,HITM);
+			HitModifiedLineCount();
 			Flush(way);
 			if(type == READ) {
 				L2.set[set_index].way[way].MESI_state = SHARED;

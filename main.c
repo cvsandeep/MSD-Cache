@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "cache_operation.h"
+#include "counters_&_performance.h"
 
 extern FILE *trace_file, *config_file;
 extern unsigned int op;
@@ -80,32 +81,7 @@ int main(int argc ,char *argv[]) {
 
 	}
 	//Counters and Calculate the performance
-	int HitCount(void)
-	{
-		debugLog(1, __func__, "operation HIT_COUNT");
-		++hitCount;
-		return hitCount;
-	}
-	int HitEvictCount(void)
-	{
-		debugLog(1, __func__, "operation HIT_COUNT");
-		++hitEvictCount;
-		return hitEvictCount;
-	}
-	int MissCount(void)
-	{
-		debugLog(1, __func__, "operation MISS_COUNT");
-		++missCount;
-		return missCount;
-	}
-	int CachePerformance(void)
-	{
-		debugLog(1, __func__, "operation CACHE_PREFORMANCE");
-		hit_percentage = (hitCount + hitEvictCount + missCount)/hitCount;
-		hit_evict_percentage = (hitCount + hitEvictCount + missCount)/hitEvictCount;
-		miss_percentage = (hitCount + hitEvictCount + missCount)/missCount;
-		printf("Performance Hits = %d, Hit&Evict = %d, Miss = %d\n",hit_percentage,hit_evict_percentage,miss_percentage);
-		return 0;
-	}
+	CachePerformance();		//function call to Performance report
+
 	return EXIT_SUCCESS;
 }
