@@ -6,6 +6,8 @@
  */
 
 #include "bus_operation.h"
+#include "logger.h"
+
 char msgOut[2048];
 /*
  * Used to simulate a bus operation and to capture the snoop results of last

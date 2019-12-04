@@ -49,7 +49,6 @@ void ReIntializeCache(void){
 // Level 1
 void readData(void)
 {
-	char msgOut[1024];
 	int evict = 1, way=0;
 	debugLog(2,__func__,"");
 	for(int w = 0; w < associativity; w++){
@@ -83,7 +82,6 @@ void readData(void)
 
 void writeData(void)
 {
-	char msgOut[1024];
 	int w;
 	debugLog(2,__func__,"");
 	//debugLog(1,__func__, msgOut);
@@ -185,7 +183,6 @@ void ClearAndSet(void)
 
 void PrintCacheLine(void)
 {
-	char msgOut[1024];
 	debugLog(2, __func__, "");
 	for (int set = 0; set < sets; set++) {
 		for(int w = 0; w < associativity; w++){
