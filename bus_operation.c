@@ -25,9 +25,16 @@ void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
  */
 unsigned int GetSnoopResult(unsigned int Address)
 {
-	sprintf(msgOut, "Address 0x%x",Address);
+	const char *res_string[] = {"NOHIT","HIT","HITM"};
+	int result = NOHIT;
+	if((Address & 0x3) == 0x00) {
+		result = HIT;
+	} else if((Address & 0x3) == 0x01) {
+		result = HITM;
+	}
+	sprintf(msgOut, "Address 0x%x,result %s ",Address,res_string[result]);
 	debugLog(0,__func__, msgOut);
-	return NOHIT;
+	return result;
 }
 
 /*

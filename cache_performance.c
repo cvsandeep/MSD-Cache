@@ -8,41 +8,46 @@
 
 
 #include "cache_performance.h"
+#include "logger.h"
+//#include "cache_operation.h"
 
-#include "cache_operation.h"
+char msgOut[1024];
 
 void HitCount(void)
 {
-	debugLog(1, __func__, "operation HIT_COUNT");
 	++hitCount;
+	sprintf(msgOut, "%d",hitCount);
+	debugLog(1, __func__, msgOut);
 }
 
 void HitModifiedLineCount(void)
 {
-	debugLog(1, __func__, "operation HIT_COUNT");
 	++hitModifiedLineCount;
+	sprintf(msgOut, "%d",hitModifiedLineCount);
+	debugLog(1, __func__, msgOut);
 }
 
 void HitEvictCount(void)
 {
-	debugLog(1, __func__, "operation HIT_COUNT");
 	++hitEvictCount;
+	sprintf(msgOut, "%d",hitEvictCount);
+	debugLog(1, __func__, msgOut);
 }
 
 void MissCount(void)
 {
-	debugLog(1, __func__, "operation MISS_COUNT");
 	++missCount;
-	//printf("miss count = %d",missCount);
+	sprintf(msgOut, "%d",missCount);
+	debugLog(1, __func__, msgOut);
 }
 
 void CachePerformance(void)
 {
-	debugLog(1, __func__, "operation CACHE_PREFORMANCE");
 	hit_percentage = hitCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
 	hit_modified_percentage = hitModifiedLineCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
 	hit_evict_percentage = hitEvictCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
 	miss_percentage = missCount/(hitCount + hitModifiedLineCount + hitEvictCount + missCount) * 100;
-	printf("Performance Hits = %d Percent, HitModifiedLine = %d Percent, Hit&Evict = %d Percent, Miss = %d Percent\n",hit_percentage,hit_modified_percentage,hit_evict_percentage,miss_percentage);
+	sprintf(msgOut, "Performance Hits = %d Percent, HitModifiedLine = %d Percent, Hit&Evict = %d Percent, Miss = %d Percent\n",hit_percentage,hit_modified_percentage,hit_evict_percentage,miss_percentage);
+	debugLog(1, __func__, msgOut);
 	//return 0;
 }

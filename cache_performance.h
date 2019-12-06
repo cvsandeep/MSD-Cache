@@ -8,7 +8,7 @@
 #include <stdlib.h>
 //#include "cache_operation.h"
 
-float hitCount, hitEvictCount, missCount,hitModifiedLineCount;
+int hitCount, hitEvictCount, missCount,hitModifiedLineCount;
 int hit_percentage, hit_modified_percentage,hit_evict_percentage, miss_percentage;
 
 void HitCount(void);
