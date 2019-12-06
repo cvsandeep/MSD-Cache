@@ -61,7 +61,7 @@ void readData(void)
 					UpdateMESIstate(RWIM, w);
 				else
 					UpdateMESIstate(READ, w);
-				HitCount();
+				//HitCount();
 				return;
 			}
 		} else {
@@ -115,7 +115,6 @@ void ReadInstruction(void)
 
 void SnoopedInvalidate(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -126,11 +125,11 @@ void SnoopedInvalidate(void)
 			}
 		}
 	}
+
 }
 
 void SnoopedRead(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -142,11 +141,11 @@ void SnoopedRead(void)
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void SnoopedWrite(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -157,22 +156,22 @@ void SnoopedWrite(void)
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void SnoopedReadX(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
 				debugLog(1,__func__, "Data found");
-				L2.set[set_index].way[w].valid = 0; //Invalidating
 				UpdateMESIstateSnoop(RWIM,w);
 				//UpdatePLRU(set_index,w);
 				return; // Return data
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void ClearAndSet(void)
@@ -219,7 +218,7 @@ void VoidWay(int way) {
 	debugLog(2, __func__, "INVALIDATE");
 	BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
 	L2.set[set_index].way[way].valid = 0; //Invalidating
-	L2.set[set_index].way[way].dirty = 0; //Invalidating
+	L2.set[set_index].way[way].dirty = 0;
 }
 
 void Flush(int way) {
@@ -276,6 +275,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			HitCount();
 			if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
+				VoidWay(way);
 			}
 			break;
 		case EXCLUSIVE:

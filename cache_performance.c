@@ -16,28 +16,28 @@ char msgOut[1024];
 void HitCount(void)
 {
 	++hitCount;
-	sprintf(msgOut, "%d",hitCount);
+	sprintf(msgOut, "%lf",hitCount);
 	debugLog(1, __func__, msgOut);
 }
 
 void HitModifiedLineCount(void)
 {
 	++hitModifiedLineCount;
-	sprintf(msgOut, "%d",hitModifiedLineCount);
+	sprintf(msgOut, "%lf",hitModifiedLineCount);
 	debugLog(1, __func__, msgOut);
 }
 
 void HitEvictCount(void)
 {
 	++hitEvictCount;
-	sprintf(msgOut, "%d",hitEvictCount);
+	sprintf(msgOut, "%lf",hitEvictCount);
 	debugLog(1, __func__, msgOut);
 }
 
 void MissCount(void)
 {
 	++missCount;
-	sprintf(msgOut, "%d",missCount);
+	sprintf(msgOut, "%lf",missCount);
 	debugLog(1, __func__, msgOut);
 }
 
