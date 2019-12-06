@@ -6,6 +6,7 @@
  */
 
 #include "cache_control.h"
+#include "logger.h"
 /*
  * Read each line from trace file and decode the operation and address
  */
@@ -28,28 +29,36 @@ int UpdateTraceOperation(void){
 void UpdateConfig(void){
 	char line[256];
 	char *config;
+	char msgOut[1024];
 
 	while(fgets(line, sizeof(line), config_file)){
 		//printf("%s\n",line);
 		config = strtok(line," ");
-		if(strcmp(config,"debug") == 0)
-		debug = (unsigned int) strtol(strtok(0 ," "), 0, 0);
+		if(strcmp(config,"debug") == 0){
+			debug = (unsigned int) strtol(strtok(0 ," "), 0, 0);
+			sprintf(msgOut,"Debug level is %d\n",debug);
+			debugLog(CONTROL,__func__, msgOut);
+		}
 
 		if(strcmp(config,"line_size") == 0) {
 			line_size = (unsigned int) strtol(strtok(0 ," "), 0, 0);
-			printf("line size is %d\n",line_size);
+			sprintf(msgOut, "line size is %d",line_size);
+			debugLog(CONTROL,__func__, msgOut);
 		}
 
 		if(strcmp(config,"associativity") == 0) {
 			associativity = (unsigned int) strtol(strtok(0 ," "), 0, 0);
-			printf("associativity is %d\n",associativity);
+			sprintf(msgOut, "associativity is %d",associativity);
+			debugLog(CONTROL,__func__, msgOut);
 		}
 
 		if(strcmp(config,"cache_lines") == 0) {
 			cache_lines = (unsigned int) strtol(strtok(0 ," "), 0, 0);
-			printf("cache_lines is %d\n",cache_lines);
+			sprintf(msgOut, "cache_lines is %d",cache_lines);
+			debugLog(CONTROL,__func__, msgOut);
 			sets = cache_lines/associativity;
 		}
+
 	}
 	fclose(config_file);
 }

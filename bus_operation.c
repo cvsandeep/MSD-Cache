@@ -17,7 +17,7 @@ void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
 {
 	//SnoopResult = GetSnoopResult(Address);
 	sprintf(msgOut, "BusOp: %d, Address:0x%08x, Snoop Result:%d", BusOp, Address,SnoopResult);
-	debugLog(0,__func__, msgOut);
+	debugLog(BUSOP,__func__, msgOut);
 }
 
 /*
@@ -33,7 +33,7 @@ unsigned int GetSnoopResult(unsigned int Address)
 		result = HITM;
 	}
 	sprintf(msgOut, "Address 0x%08x,result %s ",Address,res_string[result]);
-	debugLog(0,__func__, msgOut);
+	debugLog(BUSOP,__func__, msgOut);
 	return result;
 }
 
@@ -44,7 +44,7 @@ caches
 void PutSnoopResult(unsigned int Address, unsigned int SnoopResult)
 {
 	sprintf(msgOut, "SnoopResult: Address 0x%08x SnoopResult: %d", Address, SnoopResult);
-	debugLog(0,__func__, msgOut);
+	debugLog(BUSOP,__func__, msgOut);
 }
 
 /*
@@ -53,5 +53,5 @@ Used to simulate communication to our upper level cache
 void MessageToCache(char Message, unsigned int Address)
 {
 	sprintf(msgOut, "L2: %d 0x%08x", Message, Address);
-	debugLog(0,__func__, msgOut);
+	debugLog(BUSOP,__func__, msgOut);
 }

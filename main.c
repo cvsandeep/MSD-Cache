@@ -17,7 +17,7 @@ extern FILE *trace_file, *config_file;
 extern unsigned int op;
 
 int main(int argc ,char *argv[]) {
-	debugLog(0, "Function Name", "Messages\n");
+	//debugLog(0, "Function Name", "Messages\n");
 	if (argc < 2) {
 		debugLog(0, __func__, "Wrong number of arguments:\n Please provide the file paths for trace file and config file\n");
 		exit(EXIT_FAILURE);
@@ -35,7 +35,6 @@ int main(int argc ,char *argv[]) {
 	}
 
 	UpdateConfig();
-	printf("Debug level is %d\n",debug);
 	ReIntializeCache();
 	//L2.set->way = malloc(sizeof(struct  CACHE_LINE) * associativity);
 	//L2.set->PLRU = malloc(sizeof(struct  int) *7);
