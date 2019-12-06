@@ -50,9 +50,11 @@ int main(int argc ,char *argv[]) {
 		switch (op) {
 			case READ_DATA:
 				readData();
+				ReadCount();	//Count Reads
 				break;
 			case WRITE_DATA:
 				writeData();
+				WriteCount();	//Count Writes
 				break;
 			case READ_INSTRUCTION:
 				ReadInstruction();
@@ -82,6 +84,7 @@ int main(int argc ,char *argv[]) {
 	}
 	//Counters and Calculate the performance
 	HitCount();				//Debug Function Calls
+	HitCount();
 	MissCount();			//''
 	HitEvictCount();		//''
 	HitModifiedLineCount(); //''
