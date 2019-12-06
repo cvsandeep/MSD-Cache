@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include "logger.h"
 #include "cache_control.h"
-#include "counters_&_performance.h"
+#include "cache_performance.h"
 
 #define INVALID 0
 #define SHARED 1

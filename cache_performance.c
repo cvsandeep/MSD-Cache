@@ -7,7 +7,8 @@
  */
 
 
-#include "counters_&_performance.h"
+#include "cache_performance.h"
+
 #include "cache_operation.h"
 
 void HitCount(void)
