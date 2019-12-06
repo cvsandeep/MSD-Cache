@@ -27,6 +27,7 @@
 unsigned int tag, set_index, offset;
 extern unsigned int cache_lines, associativity,sets,line_size;
 char msgOut[2048];
+static char *MesiState[] = { "INVALID  ", "SHARED   ", "EXCLUSIVE", "MODEFIED "};
 
 void DecodeAddress(void){
 
@@ -187,18 +188,22 @@ void ClearAndSet(void)
 
 void PrintCacheLine(void)
 {
+	char buf[2048];
+	sprintf(msgOut, " ");
 	debugLog(2, __func__, "");
 	for (int set = 0; set < sets; set++) {
+		sprintf(msgOut, "Set-%d:",set);
 		for(int w = 0; w < associativity; w++){
 			if(L2.set[set].way[w].valid == 1) { //Check data is valid
-				sprintf(msgOut, "Data at address 0x%x is valid ",L2.set[set].way[w].tag);
+				//len += sizeof(msgOut);
+				sprintf(buf, " Way-%d: 0x%08x, %s;",w,L2.set[set_index].way[w].tag,MesiState[L2.set[set_index].way[w].MESI_state]);
 			}
 			else {
-				sprintf(msgOut, "Data not valid ");
+				sprintf(buf, " Way-%d:  -------- , %s;",w,MesiState[L2.set[set_index].way[w].MESI_state]);
 			}
-			debugLog(1,__func__, msgOut);
+			strcat(msgOut,buf);
 		}
-		debugLog(1,__func__, "\n");
+		debugLog(0,__func__, msgOut);
 	}
 }
 
@@ -225,8 +230,6 @@ void Flush(int way) {
 	debugLog(2, __func__, "");
 	BusOperation(WRITE, addr, GetSnoopResult(addr));
 }
-
-static char *MesiState[] = { "INVALID", "SHARED", "EXCLUSIVE", "MODEFIED"};
 
 void UpdateMESIstate(int type, int way)
 {
