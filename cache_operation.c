@@ -61,6 +61,7 @@ void readData(void)
 					UpdateMESIstate(RWIM, w);
 				else
 					UpdateMESIstate(READ, w);
+				//HitCount();
 				return;
 			}
 		} else {
@@ -74,6 +75,9 @@ void readData(void)
 
 	if(evict) {
 		way = WhichWay(set_index);
+		HitEvictCount();
+	} else {
+		MissCount();
 	}
 	L2.set[set_index].way[way].valid = 1;
 	L2.set[set_index].way[way].tag = tag;
@@ -111,7 +115,6 @@ void ReadInstruction(void)
 
 void SnoopedInvalidate(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -122,11 +125,11 @@ void SnoopedInvalidate(void)
 			}
 		}
 	}
+
 }
 
 void SnoopedRead(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -138,11 +141,11 @@ void SnoopedRead(void)
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void SnoopedWrite(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
@@ -153,22 +156,22 @@ void SnoopedWrite(void)
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void SnoopedReadX(void)
 {
-	debugLog(2, __func__, "");
 	for(int w = 0; w < associativity; w++){
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
 				debugLog(1,__func__, "Data found");
-				L2.set[set_index].way[w].valid = 0; //Invalidating
 				UpdateMESIstateSnoop(RWIM,w);
 				//UpdatePLRU(set_index,w);
 				return; // Return data
 			}
 		}
 	}
+	debugLog(2, __func__, "Data not Found");
 }
 
 void ClearAndSet(void)
@@ -211,9 +214,22 @@ int WhichWay(int set)
 	return 1;
 }
 
+void VoidWay(int way) {
+	debugLog(2, __func__, "INVALIDATE");
+	BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
+	L2.set[set_index].way[way].valid = 0; //Invalidating
+	L2.set[set_index].way[way].dirty = 0;
+}
+
+void Flush(int way) {
+	debugLog(2, __func__, "");
+	BusOperation(WRITE, addr, GetSnoopResult(addr));
+}
+
+static char *MesiState[] = { "INVALID", "SHARED", "EXCLUSIVE", "MODEFIED"};
+
 void UpdateMESIstate(int type, int way)
 {
-	debugLog(2, __func__, "");
 	int state = L2.set[set_index].way[way].MESI_state;
 	switch (state) {
 		case INVALID:
@@ -244,23 +260,12 @@ void UpdateMESIstate(int type, int way)
 		case MODEFIED:
 			break;
 	}
-}
-
-void VoidWay(int way) {
-	debugLog(2, __func__, "INVALIDATE");
-	BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
-	L2.set[set_index].way[way].valid = 0; //Invalidating
-	L2.set[set_index].way[way].dirty = 0; //Invalidating
-}
-
-void Flush(int way) {
-	debugLog(2, __func__, "");
-	BusOperation(WRITE, addr, GetSnoopResult(addr));
+	sprintf(msgOut, "%s->%s",MesiState[state],MesiState[L2.set[set_index].way[way].MESI_state]);
+	debugLog(1,__func__, msgOut);
 }
 
 void UpdateMESIstateSnoop(int type, int way)
 {
-	debugLog(2, __func__, "");
 	int state = L2.set[set_index].way[way].MESI_state;
 	switch (state) {
 		case INVALID:
@@ -270,6 +275,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			HitCount();
 			if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
+				VoidWay(way);
 			}
 			break;
 		case EXCLUSIVE:
@@ -295,4 +301,6 @@ void UpdateMESIstateSnoop(int type, int way)
 
 			break;
 	}
+	sprintf(msgOut, "%s->%s",MesiState[state],MesiState[L2.set[set_index].way[way].MESI_state]);
+	debugLog(1,__func__, msgOut);
 }
