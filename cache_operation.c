@@ -27,7 +27,8 @@
 unsigned int tag, set_index, offset;
 extern unsigned int cache_lines, associativity,sets,line_size, op;
 char msgOut[2048];
-static char *MesiState[] = { "INVALID  ", "SHARED   ", "EXCLUSIVE", "MODEFIED "};
+static char *MesiState[] = { "I", "S", "E", "M"};
+static char *dirty_str[] = { " ", "D"};
 
 void DecodeAddress(void){
 
@@ -47,6 +48,11 @@ void DecodeAddress(void){
 void ReIntializeCache(void){
 	debugLog(CACHEOPX,__func__,"");
 	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
+	for (int set = 0; set < sets; set++){
+			for(int plru =0 ; plru < 7; plru++){
+				L2.set[set].PLRU[plru] = 0;
+			}
+		}
 }
 // Level 1
 void readData(void)
@@ -197,7 +203,7 @@ void ClearAndSet(void)
 			VoidWay(w);
 		}
 		for(int plru =0 ; plru < 7; plru++){
-			L2.set->PLRU[plru] = 0;
+			L2.set[set].PLRU[plru] = 0;
 		}
 	}
 
@@ -209,14 +215,18 @@ void PrintCacheLine(void)
 	sprintf(msgOut, " ");
 	debugLog(CACHEOPX, __func__, "");
 	for (int set = 0; set < sets; set++) {
-		sprintf(msgOut, "Set-%d:",set);
+		sprintf(msgOut, "Set-%d:PLRU-",set);
+		for(int plru =0 ; plru < 7; plru++){
+			sprintf(buf, "%d",L2.set[set].PLRU[plru]);
+			strcat(msgOut,buf);
+		}
 		for(int w = 0; w < associativity; w++){
 			if(L2.set[set].way[w].valid == 1) { //Check data is valid
 				//len += sizeof(msgOut);
-				sprintf(buf, " Way-%d: 0x%08x, %s;",w,L2.set[set].way[w].tag,MesiState[L2.set[set].way[w].MESI_state]);
+				sprintf(buf, " Way-%d: 0x%08x,%s %s;",w,L2.set[set].way[w].tag, dirty_str[L2.set[set].way[w].dirty], MesiState[L2.set[set].way[w].MESI_state]);
 			}
 			else {
-				sprintf(buf, " Way-%d:  -------- , INVALID  ;",w);
+				sprintf(buf, " Way-%d:  -------- ,  I;",w);
 			}
 			strcat(msgOut,buf);
 		}
@@ -227,6 +237,12 @@ void PrintCacheLine(void)
 
 void UpdatePLRU(int set, int w)
 {
+	char buf[2048];
+	sprintf(msgOut, "PLRU Bits ");
+	for(int plru =0 ; plru < 7; plru++){
+		sprintf(buf, "%d",L2.set[set].PLRU[plru]);
+		strcat(msgOut,buf);
+	}
 	switch(w){
 		case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 0; break;
 		case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 1; break;
@@ -237,8 +253,12 @@ void UpdatePLRU(int set, int w)
 		case 6: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 0; break;
 		case 7: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 1; break;
 	}
-
-	debugLog(CACHEOPX, __func__, "PLRU Updated");
+	strcat(msgOut," Updated To ");
+	for(int plru =0 ; plru < 7; plru++){
+		sprintf(buf, "%d",L2.set[set].PLRU[plru]);
+		strcat(msgOut,buf);
+	}
+	debugLog(CACHEOPX,__func__, msgOut);
 }
 
 int WhichWay(int set)
