@@ -44,10 +44,6 @@ struct CACHE_SET_N_WAY
  * Write allocate policy with PLRU replacement
  * MESI Protocol for cache coherence
  */
-struct L2_CACHE
-{
-	struct CACHE_SET_8_WAY set[16]; //Defaulting to 0
-};
 
 struct N_CACHE
 {
@@ -64,5 +60,5 @@ struct N_CACHE
  */
 struct L1_CACHE
 {
-	struct CACHE_SET_4_WAY set[2];
+	struct CACHE_SET_4_WAY *set;
 };

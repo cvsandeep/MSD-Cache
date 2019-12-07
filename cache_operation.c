@@ -76,6 +76,11 @@ void readData(void)
 
 	if(evict) {
 		way = WhichWay(set_index);
+		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
+		if(L2.set[set_index].way[way].dirty == 1) {
+			Flush(way);
+		}
+		VoidWay(way);
 		HitEvictCount();
 	} else {
 		MissCount();
@@ -272,7 +277,7 @@ int WhichWay(int set)
 
 void VoidWay(int way) {
 	debugLog(CACHEOPX, __func__, "INVALIDATE");
-	BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
+	//BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
 	MessageToCache(INVALIDATELINE,addr);
 	L2.set[set_index].way[way].valid = 0; //Invalidating
 	L2.set[set_index].way[way].dirty = 0;
