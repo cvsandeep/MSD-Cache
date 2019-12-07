@@ -12,102 +12,180 @@
 //#include "cache_operation.h"
 
 char msgOut[1024];
-static int readCount, writeCount;
-static int readHitCount, readMissCount, writeHitCount, hitCount, readMissEvictCount, writeMissEvictCount, missCount, hitModifiedLineCount, miss_evict;
+static int IreadCount, DreadCount, IwriteCount, DwriteCount, IwriteMissCount,DwriteMissCount;;
+static int IreadHitCount, DreadHitCount, IreadMissCount, DreadMissCount,IwriteHitCount, DwriteHitCount,IhitCount, DhitCount, IreadMissEvictCount, DreadMissEvictCount, IwriteMissEvictCount, DwriteMissEvictCount, ImissCount, DmissCount, IhitModifiedLineCount, DhitModifiedLineCount, Imiss_evict, Dmiss_evict;
 float hit_percentage, hit_modified_percentage,miss_evict_percentage,miss_percentage;
 static int writeMissCount;
 
-void ReadCount(void)
+void IReadCount(void)
 {
-	++readCount;
-	sprintf(msgOut, "%d",readCount);
+	++IreadCount;
+	sprintf(msgOut, "%d",IreadCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void WriteCount(void)
+void DReadCount(void)
 {
-	++writeCount;
-	sprintf(msgOut, "%d",writeCount);
+	++DreadCount;
+	sprintf(msgOut, "%d",DreadCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void ReadHitCount(void)
+void IWriteCount(void)
 {
-	++readHitCount;
-	sprintf(msgOut, "%d",readHitCount);
+	++IwriteCount;
+	sprintf(msgOut, "%d",IwriteCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void ReadMissCount(void)
+void DWriteCount(void)
 {
-	++readMissCount;
-	sprintf(msgOut, "%d",readMissCount);
+	++DwriteCount;
+	sprintf(msgOut, "%d",DwriteCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void WriteHitCount(void)
+void IReadHitCount(void)
 {
-	++writeHitCount;
-	sprintf(msgOut, "%d",writeHitCount);
+	++IreadHitCount;
+	sprintf(msgOut, "%d",IreadHitCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void WriteMissCount(void)
+void DReadHitCount(void)
 {
-	++writeMissCount;
-	sprintf(msgOut, "%d",writeMissCount);
+	++DreadHitCount;
+	sprintf(msgOut, "%d",DreadHitCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void HitCount(void)
+void IReadMissCount(void)
 {
-	++hitCount;
-	sprintf(msgOut, "%d",hitCount);
+	++IreadMissCount;
+	sprintf(msgOut, "%d",IreadMissCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void HitModifiedLineCount(void)
+void DReadMissCount(void)
 {
-	++hitModifiedLineCount;
-	sprintf(msgOut, "%d",hitModifiedLineCount);
+	++DreadMissCount;
+	sprintf(msgOut, "%d",DreadMissCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+void IWriteHitCount(void)
+{
+	++IwriteHitCount;
+	sprintf(msgOut, "%d",IwriteHitCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void ReadMissEvictCount(void)
+void DWriteHitCount(void)
 {
-	++readMissEvictCount;
-	sprintf(msgOut, "%d",readMissEvictCount);
+	++DwriteHitCount;
+	sprintf(msgOut, "%d",DwriteHitCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void WriteMissEvictCount(void)
+void IWriteMissCount(void)
 {
-	++writeMissEvictCount;
-	sprintf(msgOut, "%d",writeMissEvictCount);
+	++IwriteMissCount;
+	sprintf(msgOut, "%d",IwriteMissCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
-void MissCount(void)
+
+void DWriteMissCount(void)
 {
-	++missCount;	// = Miss + Evict
-	sprintf(msgOut, "%d",missCount);
+	++DwriteMissCount;
+	sprintf(msgOut, "%d",DwriteMissCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void IHitCount(void)
+{
+	++IhitCount;
+	sprintf(msgOut, "%d",IhitCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void DHitCount(void)
+{
+	++DhitCount;
+	sprintf(msgOut, "%d",DhitCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void IHitModifiedLineCount(void)
+{
+	++IhitModifiedLineCount;
+	sprintf(msgOut, "%d",IhitModifiedLineCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void DHitModifiedLineCount(void)
+{
+	++DhitModifiedLineCount;
+	sprintf(msgOut, "%d",DhitModifiedLineCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void IReadMissEvictCount(void)
+{
+	++IreadMissEvictCount;
+	sprintf(msgOut, "%d",IreadMissEvictCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void DReadMissEvictCount(void)
+{
+	++DreadMissEvictCount;
+	sprintf(msgOut, "%d",DreadMissEvictCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void IWriteMissEvictCount(void)
+{
+	++IwriteMissEvictCount;
+	sprintf(msgOut, "%d",IwriteMissEvictCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void DWriteMissEvictCount(void)
+{
+	++DwriteMissEvictCount;
+	sprintf(msgOut, "%d",DwriteMissEvictCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void IMissCount(void)
+{
+	++ImissCount;	// = Miss + Evict
+	sprintf(msgOut, "%d",ImissCount);
+	debugLog(PERFORMANCE, __func__, msgOut);
+}
+
+void DMissCount(void)
+{
+	++DmissCount;	// = Miss + Evict
+	sprintf(msgOut, "%d",DmissCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
 void CachePerformance(void)
 {
-	//miss_evict = (readMissEvictCount+writeMissEvictCount);
+	Imiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
+	Dmiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
 	//hit_percentage = hitCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
 	//hit_modified_percentage = hitModifiedLineCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
 	//miss_evict_percentage = miss_evict/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
 	//miss_percentage = missCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
-	sprintf(msgOut,"Total Number of: Read Hits = %d, Read Misses = %d, Write Hits = %d, Write Misses = %d",(int)readHitCount,(int)readMissCount,(int)writeHitCount,(int)writeMissCount);
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"Total Number of Miss&Evict: Read Misses = %d, Write Misses = %d",(int)readMissEvictCount,(int)writeMissEvictCount);
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"Read + Write: Hits Reads + Writes = %d, Misses Reads + Writes = %d",(int)(readHitCount+readMissCount),(int)(writeMissCount+writeHitCount));
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"Total Number of Cache: Reads = %d, Writes = %d, Hits = %d, Misses = %d",(int)readCount,(int)writeCount,(int)hitCount,(int)missCount);
-	debugLog(0, __func__, msgOut);
+	//sprintf(msgOut,"Total Number of: Read Hits = %d, Read Misses = %d, Write Hits = %d, Write Misses = %d",(int)readHitCount,(int)readMissCount,(int)writeHitCount,(int)writeMissCount);
+	//debugLog(0, __func__, msgOut);
+	//sprintf(msgOut,"Total Number of Miss&Evict: Read Misses = %d, Write Misses = %d",(int)readMissEvictCount,(int)writeMissEvictCount);
+	//debugLog(0, __func__, msgOut);
+	//sprintf(msgOut,"Read + Write: Hits Reads + Writes = %d, Misses Reads + Writes = %d",(int)(readHitCount+readMissCount),(int)(writeMissCount+writeHitCount));
+	//debugLog(0, __func__, msgOut);
+	//sprintf(msgOut,"Total Number of Cache: Reads = %d, Writes = %d, Hits = %d, Misses = %d",(int)readCount,(int)writeCount,(int)hitCount,(int)missCount);
+	//debugLog(0, __func__, msgOut);
 	//sprintf(msgOut, "Performance: Hits = %d Percent, HitModifiedLine = %d Percent, Miss&Evict = %d Percent, Miss = %d Percent",hit_percentage,hit_modified_percentage,miss_evict_percentage,miss_percentage);
 	//debugLog(0, __func__, msgOut);
 	//return 0;
