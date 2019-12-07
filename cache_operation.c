@@ -77,9 +77,6 @@ void readData(void)
 	if(evict) {
 		way = WhichWay(set_index);
 		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
-		if(L2.set[set_index].way[way].dirty == 1) {
-			Flush(way);
-		}
 		VoidWay(way);
 		HitEvictCount();
 	} else {
@@ -94,6 +91,7 @@ void readData(void)
 	if(op == WRITE_DATA) {
 		UpdateMESIstate(RWIM, way);
 		MessageToCache(GETLINE,addr);
+		L2.set[set_index].way[way].dirty = 1;
 	} else {
 		UpdateMESIstate(READ, way);
 	}
@@ -118,8 +116,8 @@ void writeData(void)
 	} else {
 		UpdatePLRU(set_index,w);
 		UpdateMESIstate(WRITE, w);
+		L2.set[set_index].way[w].dirty = 1;
 	}
-	L2.set[set_index].way[w].dirty = 1;
 	// PutSnoopResult
 }
 
@@ -193,12 +191,16 @@ void SnoopedReadX(void)
 void ClearAndSet(void)
 {
 	debugLog(CACHEOPX, __func__, "");
-	for (int set = 0; set < sets; set++)
-	for(int w = 0; w < associativity; w++){
-		L2.set[set].way[w].valid = 0; //Clearing all
-		L2.set[set].way[w].MESI_state = 0;
-		L2.set[set].way[w].dirty = 0;
+	for (int set = 0; set < sets; set++){
+		set_index = set;
+		for(int w = 0; w < associativity; w++){
+			VoidWay(w);
+		}
+		for(int plru =0 ; plru < 7; plru++){
+			L2.set->PLRU[plru] = 0;
+		}
 	}
+
 }
 
 void PrintCacheLine(void)
@@ -280,7 +282,12 @@ void VoidWay(int way) {
 	//BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
 	MessageToCache(INVALIDATELINE,addr);
 	L2.set[set_index].way[way].valid = 0; //Invalidating
+	if(L2.set[set_index].way[way].dirty == 1) {
+		Flush(way);
+	}
 	L2.set[set_index].way[way].dirty = 0;
+	L2.set[set_index].way[way].MESI_state = 0;
+	L2.set[set_index].way[way].tag = 0;
 }
 
 void Flush(int way) {
@@ -360,9 +367,9 @@ void UpdateMESIstateSnoop(int type, int way)
 		case MODEFIED:
 			PutSnoopResult(addr,HITM);
 			HitModifiedLineCount();
-			Flush(way);
 			if(type == READ) {
 				L2.set[set_index].way[way].MESI_state = SHARED;
+				Flush(way);
 			} else if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
