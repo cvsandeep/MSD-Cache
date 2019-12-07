@@ -28,7 +28,6 @@ unsigned int tag, set_index, offset;
 extern unsigned int cache_lines, associativity,sets,line_size;
 char msgOut[2048];
 static char *MesiState[] = { "INVALID  ", "SHARED   ", "EXCLUSIVE", "MODEFIED "};
-static _Bool PLRU[SETS][7];
 
 void DecodeAddress(void){
 
@@ -87,7 +86,12 @@ void readData(void)
 	L2.set[set_index].way[way].dirty = 0;
 	L2.set[set_index].way[way].tag = tag;
 	L2.set[set_index].way[way].MESI_state = INVALID;
-	UpdateMESIstate(READ, way);
+	if(op == WRITE_DATA) {
+		UpdateMESIstate(RWIM, way);
+		MessageToCache(GETLINE,addr);
+	} else {
+		UpdateMESIstate(READ, way);
+	}
 	UpdatePLRU(set_index,way);
 }
 
@@ -217,46 +221,46 @@ void PrintCacheLine(void)
 void UpdatePLRU(int set, int w)
 {
 	switch(w){
-		case 0: PLRU[set][0] = 0; PLRU[set][1] = 0; PLRU[set][3] = 0; break;
-		case 1: PLRU[set][0] = 0; PLRU[set][1] = 0; PLRU[set][3] = 1; break;
-		case 2: PLRU[set][0] = 0; PLRU[set][1] = 1; PLRU[set][4] = 0; break;
-		case 3: PLRU[set][0] = 0; PLRU[set][1] = 1; PLRU[set][4] = 1; break;
-		case 4: PLRU[set][0] = 1; PLRU[set][2] = 0; PLRU[set][5] = 0; break;
-		case 5: PLRU[set][0] = 1; PLRU[set][2] = 0; PLRU[set][5] = 1; break;
-		case 6: PLRU[set][0] = 1; PLRU[set][2] = 1; PLRU[set][6] = 0; break;
-		case 7: PLRU[set][0] = 1; PLRU[set][2] = 1; PLRU[set][6] = 1; break;
+		case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 0; break;
+		case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 1; break;
+		case 2: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 0; break;
+		case 3: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 1; break;
+		case 4: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 0; break;
+		case 5: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 1; break;
+		case 6: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 0; break;
+		case 7: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 1; break;
 	}
 
-	debugLog(2, __func__, "PLRU Updated");
+	debugLog(CACHEOPX, __func__, "PLRU Updated");
 }
 
 int WhichWay(int set)
 {
-	debugLog(2, __func__, "Evicting");
+	debugLog(CACHEOPX, __func__, "Evicting");
 
-	if (PLRU[set][0] == 0){
-		if(PLRU[set][2] == 0){
-			if(PLRU[set][6] == 0)
+	if (L2.set[set].PLRU[0] == 0){
+		if(L2.set[set].PLRU[2] == 0){
+			if(L2.set[set].PLRU[6] == 0)
 				return 7;
 			else
 				return 6;
 		}
 		else{
-			if(PLRU[set][5] == 0)
+			if(L2.set[set].PLRU[5] == 0)
 				return 5;
 			else
 				return 4;
 		}
 	}
 	else{
-		if(PLRU[set][1] == 0){
-			if(PLRU[set][4] == 0)
+		if(L2.set[set].PLRU[1] == 0){
+			if(L2.set[set].PLRU[4] == 0)
 				return 3;
 			else
 				return 2;
 		}
 		else{
-			if(PLRU[set][3] == 0)
+			if(L2.set[set].PLRU[3] == 0)
 				return 1;
 			else
 				return 0;
@@ -341,7 +345,7 @@ void UpdateMESIstateSnoop(int type, int way)
 		case EXCLUSIVE:
 			PutSnoopResult(addr,HIT);
 			HitCount();
-			if(type == RWIM){
+			if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
 			} else if(type == READ){
