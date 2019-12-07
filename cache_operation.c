@@ -285,7 +285,7 @@ void VoidWay(int way) {
 
 void Flush(int way) {
 	debugLog(CACHEOPX, __func__, "");
-	BusOperation(WRITE, addr, GetSnoopResult(addr));
+	BusOperation(WRITE, addr, HITM);
 }
 
 void UpdateMESIstate(int type, int way)
@@ -296,7 +296,7 @@ void UpdateMESIstate(int type, int way)
 			if(type == READ) {
 				int res = GetSnoopResult(addr);
 				BusOperation(READ, addr, res); //Read from DRAM
-				if ( res == HIT) {
+				if ( res == HIT || res == HITM) {
 					L2.set[set_index].way[way].MESI_state = SHARED;
 				} else if ( res == NOHIT) {
 					L2.set[set_index].way[way].MESI_state = EXCLUSIVE;
@@ -312,7 +312,7 @@ void UpdateMESIstate(int type, int way)
 				MessageToCache(SENDLINE,addr);//Sends data to L1
 			} else {
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
-				BusOperation(INVALIDATE, addr, GetSnoopResult(addr)); //Send BusUpgr command to bus
+				BusOperation(INVALIDATE, addr, HIT); //Send BusUpgr command to bus
 			}
 			break;
 		case EXCLUSIVE:
@@ -342,7 +342,7 @@ void UpdateMESIstateSnoop(int type, int way)
 		case SHARED:
 			PutSnoopResult(addr,HIT);
 			HitCount();
-			if(type == RWIM || type == INVALIDATE ){
+			if(type == WRITE  || type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
 			}

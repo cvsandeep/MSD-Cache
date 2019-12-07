@@ -45,15 +45,15 @@ caches
 */
 void PutSnoopResult(unsigned int Address, unsigned int SnoopResult)
 {
-	sprintf(msgOut, "SnoopResult: Address 0x%08x SnoopResult: %d", Address, SnoopResult);
+	sprintf(msgOut, "SnoopResult: Address 0x%08x SnoopResult: %s", Address, res_string[SnoopResult]);
 	debugLog(BUSOP,__func__, msgOut);
 }
 
 /*
 Used to simulate communication to our upper level cache
 */
-void MessageToCache(char Message, unsigned int Address)
+void MessageToCache(int Message, unsigned int Address)
 {
-	sprintf(msgOut, "L2: %d 0x%08x", Message, Address);
+	sprintf(msgOut, "L2->L1: %s 0x%08x", msg_string[Message], Address);
 	debugLog(BUSOP,__func__, msgOut);
 }

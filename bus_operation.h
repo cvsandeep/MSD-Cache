@@ -37,7 +37,7 @@
 void BusOperation(int BusOp, unsigned int Address, unsigned SnoopResult);
 unsigned int GetSnoopResult(unsigned int Address);
 void PutSnoopResult(unsigned int Address, unsigned SnoopResult);
-void MessageToCache(char Message, unsigned int Address);
+void MessageToCache(int Message, unsigned int Address);
 
 
 
