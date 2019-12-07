@@ -9,13 +9,20 @@
 
 #include "cache_performance.h"
 #include "logger.h"
-//#include "cache_operation.h"
+#include "cache_operation.h"
 
 char msgOut[1024];
-static int IreadCount, DreadCount, IwriteCount, DwriteCount, IwriteMissCount,DwriteMissCount;;
-static int IreadHitCount, DreadHitCount, IreadMissCount, DreadMissCount,IwriteHitCount, DwriteHitCount,IhitCount, DhitCount, IreadMissEvictCount, DreadMissEvictCount, IwriteMissEvictCount, DwriteMissEvictCount, ImissCount, DmissCount, IhitModifiedLineCount, DhitModifiedLineCount, Imiss_evict, Dmiss_evict;
-float hit_percentage, hit_modified_percentage,miss_evict_percentage,miss_percentage;
-static int writeMissCount;
+//static int IreadCount, DreadCount, IwriteCount, DwriteCount, IwriteMissCount,DwriteMissCount;;
+//static int IreadHitCount, DreadHitCount, IreadMissCount, DreadMissCount,IwriteHitCount, DwriteHitCount,IhitCount, DhitCount, IreadMissEvictCount, DreadMissEvictCount, IwriteMissEvictCount, DwriteMissEvictCount, ImissCount, DmissCount, IhitModifiedLineCount, DhitModifiedLineCount, Imiss_evict, Dmiss_evict;
+//float hit_percentage, hit_modified_percentage,miss_evict_percentage,miss_percentage;
+//static int writeMissCount;
+
+static int IreadHitCount, DreadHitCount, DwriteHitCount;
+static int IreadMissCount, DreadMissCount, DwriteMissCount;
+static int IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount;
+static int IreadCount, DreadCount, DwriteCount;
+
+static int IhitCount,DhitCount,ImissCount,DmissCount;
 
 void IReadCount(void)
 {
@@ -31,13 +38,6 @@ void DReadCount(void)
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void IWriteCount(void)
-{
-	++IwriteCount;
-	sprintf(msgOut, "%d",IwriteCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
 void DWriteCount(void)
 {
 	++DwriteCount;
@@ -45,59 +45,59 @@ void DWriteCount(void)
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void IReadHitCount(void)
-{
-	++IreadHitCount;
-	sprintf(msgOut, "%d",IreadHitCount);
+void HitCount(void){
+	switch(op){
+		case READ_DATA:
+			++DreadHitCount;
+			sprintf(msgOut, "%d",DreadHitCount);
+			break;
+		case WRITE_DATA:
+			++DwriteHitCount;
+			sprintf(msgOut, "%d",DwriteHitCount);
+			break;
+		case READ_INSTRUCTION:
+			++IreadHitCount;
+			sprintf(msgOut, "%d",IreadHitCount);
+			break;
+	}
 	debugLog(PERFORMANCE, __func__, msgOut);
+
 }
 
-void DReadHitCount(void)
-{
-	++DreadHitCount;
-	sprintf(msgOut, "%d",DreadHitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
+void MissCount(void){
+	switch(op){
+			case READ_DATA:
+				++DreadMissCount;
+				sprintf(msgOut, "%d",DreadMissCount);
+				break;
+			case WRITE_DATA:
+				++DwriteMissCount;
+				sprintf(msgOut, "%d",DwriteMissCount);
+				break;
+			case READ_INSTRUCTION:
+				++IreadMissCount;
+				sprintf(msgOut, "%d",IreadMissCount);
+				break;
+		}
+		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void IReadMissCount(void)
-{
-	++IreadMissCount;
-	sprintf(msgOut, "%d",IreadMissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DReadMissCount(void)
-{
-	++DreadMissCount;
-	sprintf(msgOut, "%d",DreadMissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-void IWriteHitCount(void)
-{
-	++IwriteHitCount;
-	sprintf(msgOut, "%d",IwriteHitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DWriteHitCount(void)
-{
-	++DwriteHitCount;
-	sprintf(msgOut, "%d",DwriteHitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void IWriteMissCount(void)
-{
-	++IwriteMissCount;
-	sprintf(msgOut, "%d",IwriteMissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DWriteMissCount(void)
-{
-	++DwriteMissCount;
-	sprintf(msgOut, "%d",DwriteMissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
+void EvictCount(void){
+	switch(op){
+			case READ_DATA:
+				++DreadMissEvictCount;
+				sprintf(msgOut, "%d",DreadMissEvictCount);
+				break;
+			case WRITE_DATA:
+				++DwriteMissEvictCount;
+				sprintf(msgOut, "%d",DwriteMissEvictCount);
+				break;
+			case READ_INSTRUCTION:
+				++IreadMissEvictCount;
+				sprintf(msgOut, "%d",IreadMissEvictCount);
+				break;
+		}
+		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
 void IHitCount(void)
@@ -111,48 +111,6 @@ void DHitCount(void)
 {
 	++DhitCount;
 	sprintf(msgOut, "%d",DhitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void IHitModifiedLineCount(void)
-{
-	++IhitModifiedLineCount;
-	sprintf(msgOut, "%d",IhitModifiedLineCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DHitModifiedLineCount(void)
-{
-	++DhitModifiedLineCount;
-	sprintf(msgOut, "%d",DhitModifiedLineCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void IReadMissEvictCount(void)
-{
-	++IreadMissEvictCount;
-	sprintf(msgOut, "%d",IreadMissEvictCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DReadMissEvictCount(void)
-{
-	++DreadMissEvictCount;
-	sprintf(msgOut, "%d",DreadMissEvictCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void IWriteMissEvictCount(void)
-{
-	++IwriteMissEvictCount;
-	sprintf(msgOut, "%d",IwriteMissEvictCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DWriteMissEvictCount(void)
-{
-	++DwriteMissEvictCount;
-	sprintf(msgOut, "%d",DwriteMissEvictCount);
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
@@ -172,8 +130,8 @@ void DMissCount(void)
 
 void CachePerformance(void)
 {
-	Imiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
-	Dmiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
+	//Imiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
+	//Dmiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
 	//hit_percentage = hitCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
 	//hit_modified_percentage = hitModifiedLineCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
 	//miss_evict_percentage = miss_evict/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
@@ -188,5 +146,23 @@ void CachePerformance(void)
 	//debugLog(0, __func__, msgOut);
 	//sprintf(msgOut, "Performance: Hits = %d Percent, HitModifiedLine = %d Percent, Miss&Evict = %d Percent, Miss = %d Percent",hit_percentage,hit_modified_percentage,miss_evict_percentage,miss_percentage);
 	//debugLog(0, __func__, msgOut);
-	//return 0;
+	sprintf(msgOut,"\t ReadI \t ReadD \t Write");
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"HITS :\t %d \t %d \t %d", IreadHitCount, DreadHitCount, DwriteHitCount);
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"MISS :\t %d \t %d \t %d", IreadMissCount, DreadMissCount, DwriteMissCount);
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"EVICT:\t %d \t %d \t %d", IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount);
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"TOTAL:\t %d \t %d \t %d", IreadCount, DreadCount, DwriteCount);
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"IhitCount=%d, DhitCount=%d, ImissCount=%d, DmissCount=%d",IhitCount,DhitCount,ImissCount,DmissCount);
+	debugLog(0, __func__, msgOut);
+
+	// Hit Percentage = hits/read+write
+	// Miss Percentage = misses/read+write
+
+
+
+	return;
 }
