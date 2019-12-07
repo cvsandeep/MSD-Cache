@@ -18,6 +18,7 @@
 #define SHARED 1
 #define EXCLUSIVE 2
 #define MODEFIED 3
+#define SETS 31250
 
 void DecodeAddress(void);
 void ReIntializeCache(void);
