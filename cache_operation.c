@@ -63,12 +63,11 @@ void readData(void)
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
 				debugLog(CACHEOP,__func__, "Data found");
-				UpdatePLRU(set_index,w);
 				if(op == WRITE_DATA)
 					UpdateMESIstate(RWIM, w);
 				else
 					UpdateMESIstate(READ, w);
-				//HitCount();
+				UpdatePLRU(set_index,w);
 				return;
 			}
 		} else {
@@ -82,12 +81,10 @@ void readData(void)
 
 	if(evict) {
 		way = WhichWay(set_index);
-		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 		VoidWay(way);
-		HitEvictCount();
-	} else {
-		MissCount();
+		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 	}
+
 	sprintf(msgOut, "Set-%d; Way-%d; Tag-0x%08x",set_index,way,tag);
 	debugLog(CACHEOP,__func__,msgOut);
 	L2.set[set_index].way[way].valid = 1;
@@ -96,7 +93,7 @@ void readData(void)
 	L2.set[set_index].way[way].MESI_state = INVALID;
 	if(op == WRITE_DATA) {
 		UpdateMESIstate(RWIM, way);
-		MessageToCache(GETLINE,addr);
+		//MessageToCache(GETLINE,addr);
 		L2.set[set_index].way[way].dirty = 1;
 	} else {
 		UpdateMESIstate(READ, way);
@@ -124,7 +121,6 @@ void writeData(void)
 		UpdateMESIstate(WRITE, w);
 		L2.set[set_index].way[w].dirty = 1;
 	}
-	// PutSnoopResult
 }
 
 void ReadInstruction(void)
@@ -293,7 +289,6 @@ int WhichWay(int set)
 				return 0;
 
 		}
-
 	}
 }
 
@@ -301,6 +296,9 @@ void VoidWay(int way) {
 	debugLog(CACHEOPX, __func__, "INVALIDATE");
 	//BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
 	MessageToCache(INVALIDATELINE,addr);
+	//Getting the line from L1 to check weather its dirty or not
+	if(op < 3) //Means Evicting
+		MessageToCache(GETLINE,L2.set[set_index].way[way].tag);
 	L2.set[set_index].way[way].valid = 0; //Invalidating
 	if(L2.set[set_index].way[way].dirty == 1) {
 		Flush(way);
@@ -339,7 +337,7 @@ void UpdateMESIstate(int type, int way)
 				MessageToCache(SENDLINE,addr);//Sends data to L1
 			} else {
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
-				BusOperation(INVALIDATE, addr, HIT); //Send BusUpgr command to bus
+				BusOperation(INVALIDATE, addr, HITM); //Send BusUpgr command to bus
 			}
 			break;
 		case EXCLUSIVE:
