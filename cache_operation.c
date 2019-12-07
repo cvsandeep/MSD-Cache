@@ -63,6 +63,7 @@ void readData(void)
 		if(L2.set[set_index].way[w].valid == 1) { //Check data is valid
 			if(L2.set[set_index].way[w].tag == tag) { //Check tag
 				debugLog(CACHEOP,__func__, "Data found");
+				HitCount();
 				if(op == WRITE_DATA)
 					UpdateMESIstate(RWIM, w);
 				else
@@ -83,6 +84,9 @@ void readData(void)
 		way = WhichWay(set_index);
 		VoidWay(way);
 		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
+		EvictCount();
+	} else {
+		MissCount();
 	}
 
 	sprintf(msgOut, "Set-%d; Way-%d; Tag-0x%08x",set_index,way,tag);
@@ -117,6 +121,7 @@ void writeData(void)
 	if ( w == associativity){
 		readData();
 	} else {
+		HitCount();
 		UpdatePLRU(set_index,w);
 		UpdateMESIstate(WRITE, w);
 		L2.set[set_index].way[w].dirty = 1;
@@ -366,7 +371,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			break;
 		case SHARED:
 			PutSnoopResult(addr,HIT);
-			HitCount();
+			//HitCount();
 			if(type == WRITE  || type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
@@ -374,7 +379,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			break;
 		case EXCLUSIVE:
 			PutSnoopResult(addr,HIT);
-			HitCount();
+			//HitCount();
 			if(type == RWIM || type == INVALIDATE ){
 				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
@@ -384,7 +389,7 @@ void UpdateMESIstateSnoop(int type, int way)
 			break;
 		case MODEFIED:
 			PutSnoopResult(addr,HITM);
-			HitModifiedLineCount();
+			//HitModifiedLineCount();
 			if(type == READ) {
 				L2.set[set_index].way[way].MESI_state = SHARED;
 				Flush(way);
