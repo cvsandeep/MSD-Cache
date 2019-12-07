@@ -25,7 +25,7 @@
 #include "cache_performance.h"
 
 unsigned int tag, set_index, offset;
-extern unsigned int cache_lines, associativity,sets,line_size;
+extern unsigned int cache_lines, associativity,sets,line_size, op;
 char msgOut[2048];
 static char *MesiState[] = { "INVALID  ", "SHARED   ", "EXCLUSIVE", "MODEFIED "};
 
@@ -81,7 +81,7 @@ void readData(void)
 		MissCount();
 	}
 	sprintf(msgOut, "Set-%d; Way-%d; Tag-0x%08x",set_index,way,tag);
-	debugLog(CACHEOPX,__func__,msgOut);
+	debugLog(CACHEOP,__func__,msgOut);
 	L2.set[set_index].way[way].valid = 1;
 	L2.set[set_index].way[way].dirty = 0;
 	L2.set[set_index].way[way].tag = tag;
@@ -297,7 +297,7 @@ void UpdateMESIstate(int type, int way)
 					L2.set[set_index].way[way].MESI_state = EXCLUSIVE;
 				}
 				MessageToCache(SENDLINE,addr);//Sends data to L1
-			} else if(type == WRITE){
+			} else if(type == WRITE || type == RWIM){
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
 				BusOperation(RWIM, addr, GetSnoopResult(addr)); //Send readX command to bus
 			}
