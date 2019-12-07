@@ -28,6 +28,7 @@ unsigned int tag, set_index, offset;
 extern unsigned int cache_lines, associativity,sets,line_size;
 char msgOut[2048];
 static char *MesiState[] = { "INVALID  ", "SHARED   ", "EXCLUSIVE", "MODEFIED "};
+static _Bool PLRU[SETS][7];
 
 void DecodeAddress(void){
 
@@ -215,13 +216,54 @@ void PrintCacheLine(void)
 
 void UpdatePLRU(int set, int w)
 {
-	debugLog(CACHEOPX, __func__, "");
+	switch(w){
+		case 0: PLRU[set][0] = 0; PLRU[set][1] = 0; PLRU[set][3] = 0; break;
+		case 1: PLRU[set][0] = 0; PLRU[set][1] = 0; PLRU[set][3] = 1; break;
+		case 2: PLRU[set][0] = 0; PLRU[set][1] = 1; PLRU[set][4] = 0; break;
+		case 3: PLRU[set][0] = 0; PLRU[set][1] = 1; PLRU[set][4] = 1; break;
+		case 4: PLRU[set][0] = 1; PLRU[set][2] = 0; PLRU[set][5] = 0; break;
+		case 5: PLRU[set][0] = 1; PLRU[set][2] = 0; PLRU[set][5] = 1; break;
+		case 6: PLRU[set][0] = 1; PLRU[set][2] = 1; PLRU[set][6] = 0; break;
+		case 7: PLRU[set][0] = 1; PLRU[set][2] = 1; PLRU[set][6] = 1; break;
+	}
+
+	debugLog(2, __func__, "PLRU Updated");
 }
 
 int WhichWay(int set)
 {
-	debugLog(CACHEOPX, __func__, "Evicting");
-	return 1;
+	debugLog(2, __func__, "Evicting");
+
+	if (PLRU[set][0] == 0){
+		if(PLRU[set][2] == 0){
+			if(PLRU[set][6] == 0)
+				return 7;
+			else
+				return 6;
+		}
+		else{
+			if(PLRU[set][5] == 0)
+				return 5;
+			else
+				return 4;
+		}
+	}
+	else{
+		if(PLRU[set][1] == 0){
+			if(PLRU[set][4] == 0)
+				return 3;
+			else
+				return 2;
+		}
+		else{
+			if(PLRU[set][3] == 0)
+				return 1;
+			else
+				return 0;
+
+		}
+
+	}
 }
 
 void VoidWay(int way) {
