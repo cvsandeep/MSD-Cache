@@ -8,9 +8,6 @@
 #include <stdlib.h>
 //#include "cache_operation.h"
 
-float readHitCount,readMissCount,writeHitCount,writeMissCount,readCount, writeCount, hitCount, readMissEvictCount,writeMissEvictCount,missCount,hitModifiedLineCount;
-int miss_evict,hit_percentage, hit_modified_percentage,miss_evict_percentage,miss_percentage;
-
 void ReadHitCount(void);
 void ReadMissCount(void);
 void WriteHitCount(void);
