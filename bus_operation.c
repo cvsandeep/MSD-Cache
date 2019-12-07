@@ -9,6 +9,9 @@
 #include "logger.h"
 
 char msgOut[2048];
+char *res_string[] = {"NOHIT","HIT","HITM"};
+char *BusOp_string[] = {"","READ","WRITE","INVALIDATE","RWIM"};
+char *msg_string[] = {"", "GETLINE","SENDLINE", "INVALIDATELINE", "EVICTLINE"};
 /*
  * Used to simulate a bus operation and to capture the snoop results of last
  * level caches of other processors
@@ -16,7 +19,7 @@ char msgOut[2048];
 void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
 {
 	//SnoopResult = GetSnoopResult(Address);
-	sprintf(msgOut, "BusOp: %d, Address:0x%08x, Snoop Result:%d", BusOp, Address,SnoopResult);
+	sprintf(msgOut, "BusOp: %s, Address:0x%08x, Snoop Result:%s", BusOp_string[BusOp], Address,res_string[SnoopResult]);
 	debugLog(BUSOP,__func__, msgOut);
 }
 
@@ -25,7 +28,6 @@ void BusOperation(int BusOp, unsigned int Address, unsigned int SnoopResult)
  */
 unsigned int GetSnoopResult(unsigned int Address)
 {
-	const char *res_string[] = {"NOHIT","HIT","HITM"};
 	int result = NOHIT;
 	if((Address & 0x3) == 0x00) {
 		result = HIT;
