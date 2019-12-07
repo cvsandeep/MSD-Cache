@@ -49,13 +49,14 @@ int main(int argc ,char *argv[]) {
 		switch (op) {
 			case READ_DATA:
 				readData();
-				ReadCount();	//Count Reads
+				DReadCount();	//Count Reads
 				break;
 			case WRITE_DATA:
 				writeData();
-				WriteCount();	//Count Writes
+				DWriteCount();	//Count Writes
 				break;
 			case READ_INSTRUCTION:
+				IReadCount();
 				ReadInstruction();
 				break;
 			case SNOOPED_INVALIDATE:
@@ -82,11 +83,6 @@ int main(int argc ,char *argv[]) {
 
 	}
 	//Counters and Calculate the performance
-	HitCount();				//Debug Function Calls
-	HitCount();
-	MissCount();			//''
-	HitEvictCount();		//''
-	HitModifiedLineCount(); //''
 	CachePerformance();		//function call to Performance report
 	return EXIT_SUCCESS;
 }
