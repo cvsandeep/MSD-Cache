@@ -81,9 +81,9 @@ void readData(void)
 	debugLog(CACHEOP,__func__, "Data not found in the cache line");
 
 	if(evict) {
+		debugLog(CACHEOPX,__func__, "Evicting");
 		way = WhichWay(set_index);
 		VoidWay(way);
-		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 		EvictCount();
 	} else {
 		MissCount();
@@ -300,10 +300,13 @@ int WhichWay(int set)
 void VoidWay(int way) {
 	debugLog(CACHEOPX, __func__, "INVALIDATE");
 	//BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
-	MessageToCache(INVALIDATELINE,addr);
+
 	//Getting the line from L1 to check weather its dirty or not
 	if(op < 3) //Means Evicting
 		MessageToCache(GETLINE,L2.set[set_index].way[way].tag);
+	MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
+	if(op < 3) //Means Evicting
+		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 	L2.set[set_index].way[way].valid = 0; //Invalidating
 	if(L2.set[set_index].way[way].dirty == 1) {
 		Flush(way);

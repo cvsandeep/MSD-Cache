@@ -22,8 +22,6 @@ static int IreadMissCount, DreadMissCount, DwriteMissCount;
 static int IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount;
 static int IreadCount, DreadCount, DwriteCount;
 
-static int IhitCount,DhitCount,ImissCount,DmissCount;
-
 void IReadCount(void)
 {
 	++IreadCount;
@@ -100,69 +98,37 @@ void EvictCount(void){
 		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
-void IHitCount(void)
-{
-	++IhitCount;
-	sprintf(msgOut, "%d",IhitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DHitCount(void)
-{
-	++DhitCount;
-	sprintf(msgOut, "%d",DhitCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void IMissCount(void)
-{
-	++ImissCount;	// = Miss + Evict
-	sprintf(msgOut, "%d",ImissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
-void DMissCount(void)
-{
-	++DmissCount;	// = Miss + Evict
-	sprintf(msgOut, "%d",DmissCount);
-	debugLog(PERFORMANCE, __func__, msgOut);
-}
-
 void CachePerformance(void)
 {
-	//Imiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
-	//Dmiss_evict = (IreadMissEvictCount+IwriteMissEvictCount);
-	//hit_percentage = hitCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
-	//hit_modified_percentage = hitModifiedLineCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
-	//miss_evict_percentage = miss_evict/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
-	//miss_percentage = missCount/(hitCount + hitModifiedLineCount + miss_evict + missCount) * 100;
-	//sprintf(msgOut,"Total Number of: Read Hits = %d, Read Misses = %d, Write Hits = %d, Write Misses = %d",(int)readHitCount,(int)readMissCount,(int)writeHitCount,(int)writeMissCount);
-	//debugLog(0, __func__, msgOut);
-	//sprintf(msgOut,"Total Number of Miss&Evict: Read Misses = %d, Write Misses = %d",(int)readMissEvictCount,(int)writeMissEvictCount);
-	//debugLog(0, __func__, msgOut);
-	//sprintf(msgOut,"Read + Write: Hits Reads + Writes = %d, Misses Reads + Writes = %d",(int)(readHitCount+readMissCount),(int)(writeMissCount+writeHitCount));
-	//debugLog(0, __func__, msgOut);
-	//sprintf(msgOut,"Total Number of Cache: Reads = %d, Writes = %d, Hits = %d, Misses = %d",(int)readCount,(int)writeCount,(int)hitCount,(int)missCount);
-	//debugLog(0, __func__, msgOut);
-	//sprintf(msgOut, "Performance: Hits = %d Percent, HitModifiedLine = %d Percent, Miss&Evict = %d Percent, Miss = %d Percent",hit_percentage,hit_modified_percentage,miss_evict_percentage,miss_percentage);
-	//debugLog(0, __func__, msgOut);
 	sprintf(msgOut,"\t ReadI \t ReadD \t Write \t TOTAL");
 	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d", IreadHitCount, DreadHitCount, DwriteHitCount, (IreadHitCount + DreadHitCount + DwriteHitCount));
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"MISS :\t %d \t %d \t %d \t %d", IreadMissCount, DreadMissCount, DwriteMissCount,(IreadMissCount + DreadMissCount + DwriteMissCount + IreadMissEvictCount + DreadMissEvictCount + DwriteMissEvictCount));
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"EVICT:\t %d \t %d \t %d", IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount);
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"TOTAL:\t %d \t %d \t %d \t %d", IreadCount, DreadCount, DwriteCount,(IreadCount + DreadCount + DwriteCount));
-	debugLog(0, __func__, msgOut);
-	sprintf(msgOut,"IhitCount=%d, DhitCount=%d, ImissCount=%d, DmissCount=%d",IhitCount,DhitCount,ImissCount,DmissCount);
+	int TotalHitCount = IreadHitCount + DreadHitCount + DwriteHitCount;
+	int ToatalMissCount = IreadMissCount + DreadMissCount + DwriteMissCount;
+	int TotalEvictMissCount = IreadMissEvictCount + DreadMissEvictCount + DwriteMissEvictCount;
+	int TotalOperations = IreadCount + DreadCount + DwriteCount;
+
+	float hit_percentage = (TotalHitCount/(1.0*TotalOperations))*100;
+	float miss_percentage = (ToatalMissCount/(1.0*TotalOperations))*100;
+	float missEvict_percentage = (TotalEvictMissCount/(1.0*TotalOperations))*100;
+
+	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d(%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
 	debugLog(0, __func__, msgOut);
 
-	// Hit Percentage = hits/read+write
-	// Miss Percentage = misses/read+write
+
+	sprintf(msgOut,"MISS :\t %d \t %d \t %d \t %d(%03.02f%c)", IreadMissCount, DreadMissCount, DwriteMissCount,ToatalMissCount, miss_percentage,'%');
+	debugLog(0, __func__, msgOut);
+
+	sprintf(msgOut,"EVICT:\t %d \t %d \t %d \t %d(%03.02f%c)", IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount,TotalEvictMissCount,missEvict_percentage,'%');
+	debugLog(0, __func__, msgOut);
 
 
+	sprintf(msgOut,"TOTAL:\t %d \t %d \t %d \t %d", IreadCount, DreadCount, DwriteCount,TotalOperations);
+	debugLog(0, __func__, msgOut);
+
+	float AMAT = (hit_percentage/100.0) * 5 + ((miss_percentage+missEvict_percentage)/100.0) * 100;
+	debugLog(0, __func__, "If we assume Hit time is 5 cycles & Miss time is 100 Cycles");
+	sprintf(msgOut,"Average Memory Access Time(AMAT) = %f cycles",AMAT);
+	debugLog(0, __func__, msgOut);
 
 	return;
 }
