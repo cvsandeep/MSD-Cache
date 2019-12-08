@@ -201,7 +201,7 @@ void ClearAndSet(void)
 	for (int set = 0; set < sets; set++){
 		set_index = set;
 		for(int w = 0; w < associativity; w++){
-			VoidWay(w);
+				VoidWay(w);
 		}
 		for(int plru =0 ; plru < 7; plru++){
 			L2.set[set].PLRU[plru] = 0;
@@ -213,9 +213,11 @@ void ClearAndSet(void)
 void PrintCacheLine(void)
 {
 	char buf[2048];
+	int set_filled = 0;
 	sprintf(msgOut, " ");
 	debugLog(CACHEOPX, __func__, "");
 	for (int set = 0; set < sets; set++) {
+		set_filled = 0;
 		sprintf(msgOut, "Set-%d:PLRU-",set);
 		for(int plru =0 ; plru < 7; plru++){
 			sprintf(buf, "%d",L2.set[set].PLRU[plru]);
@@ -225,13 +227,15 @@ void PrintCacheLine(void)
 			if(L2.set[set].way[w].valid == 1) { //Check data is valid
 				//len += sizeof(msgOut);
 				sprintf(buf, " Way-%d: 0x%08x,%s %s;",w,L2.set[set].way[w].tag, dirty_str[L2.set[set].way[w].dirty], MesiState[L2.set[set].way[w].MESI_state]);
+				set_filled = 1;
 			}
 			else {
 				sprintf(buf, " Way-%d:  -------- ,  I;",w);
 			}
 			strcat(msgOut,buf);
 		}
-		debugLog(0,__func__, msgOut);
+		if(set_filled)
+			debugLog(0,__func__, msgOut);
 	}
 }
 
@@ -298,19 +302,19 @@ int WhichWay(int set)
 }
 
 void VoidWay(int way) {
-	debugLog(CACHEOPX, __func__, "INVALIDATE");
-	//BusOperation(INVALIDATE, addr, GetSnoopResult(addr));
-
-	//Getting the line from L1 to check weather its dirty or not
-	if(op < 3) //Means Evicting
-		MessageToCache(GETLINE,L2.set[set_index].way[way].tag);
-	MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
-	if(op < 3) //Means Evicting
-		MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
-	L2.set[set_index].way[way].valid = 0; //Invalidating
-	if(L2.set[set_index].way[way].dirty == 1) {
-		Flush(way);
+	debugLog(CACHEOPX, __func__, "");
+	if (L2.set[set_index].way[way].valid == 1) {
+		//Getting the line from L1 to check weather its dirty or not
+		if(op < 3) //Means Evicting
+			MessageToCache(GETLINE,L2.set[set_index].way[way].tag);
+		MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
+		if(op < 3) //Means Evicting
+			MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
+		if(L2.set[set_index].way[way].dirty == 1) {
+			Flush(way);
+		}
 	}
+	L2.set[set_index].way[way].valid = 0;
 	L2.set[set_index].way[way].dirty = 0;
 	L2.set[set_index].way[way].MESI_state = 0;
 	L2.set[set_index].way[way].tag = 0;

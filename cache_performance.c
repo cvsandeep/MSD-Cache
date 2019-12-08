@@ -111,14 +111,14 @@ void CachePerformance(void)
 	float miss_percentage = (ToatalMissCount/(1.0*TotalOperations))*100;
 	float missEvict_percentage = (TotalEvictMissCount/(1.0*TotalOperations))*100;
 
-	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d(%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
+	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d \t (%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
 	debugLog(0, __func__, msgOut);
 
 
-	sprintf(msgOut,"MISS :\t %d \t %d \t %d \t %d(%03.02f%c)", IreadMissCount, DreadMissCount, DwriteMissCount,ToatalMissCount, miss_percentage,'%');
+	sprintf(msgOut,"MISS :\t %d \t %d \t %d \t %d \t (%03.02f%c)", IreadMissCount, DreadMissCount, DwriteMissCount,ToatalMissCount, miss_percentage,'%');
 	debugLog(0, __func__, msgOut);
 
-	sprintf(msgOut,"EVICT:\t %d \t %d \t %d \t %d(%03.02f%c)", IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount,TotalEvictMissCount,missEvict_percentage,'%');
+	sprintf(msgOut,"EVICT:\t %d \t %d \t %d \t %d \t (%03.02f%c)", IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount,TotalEvictMissCount,missEvict_percentage,'%');
 	debugLog(0, __func__, msgOut);
 
 
