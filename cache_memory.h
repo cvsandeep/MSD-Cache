@@ -6,8 +6,6 @@
  *
  */
 
-#define BYTE_LINES 64
-
 struct CACHE_LINE
 {
 	int valid;

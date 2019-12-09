@@ -248,16 +248,26 @@ void UpdatePLRU(int set, int w)
 		sprintf(buf, "%d",L2.set[set].PLRU[plru]);
 		strcat(msgOut,buf);
 	}
-	switch(w){
-		case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 0; break;
-		case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 1; break;
-		case 2: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 0; break;
-		case 3: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 1; break;
-		case 4: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 0; break;
-		case 5: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 1; break;
-		case 6: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 0; break;
-		case 7: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 1; break;
-	}
+	if(associativity == 8)
+		switch(w){
+			case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 0; break;
+			case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 1; break;
+			case 2: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 0; break;
+			case 3: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; L2.set[set].PLRU[4] = 1; break;
+			case 4: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 0; break;
+			case 5: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; L2.set[set].PLRU[5] = 1; break;
+			case 6: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 0; break;
+			case 7: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 1; break;
+		}
+
+	if(associativity == 4)
+		switch(w){
+			case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; break;
+			case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; break;
+			case 2: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; break;
+			case 3: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; break;
+		}
+
 	strcat(msgOut," Updated To ");
 	for(int plru =0 ; plru < 7; plru++){
 		sprintf(buf, "%d",L2.set[set].PLRU[plru]);
@@ -269,44 +279,67 @@ void UpdatePLRU(int set, int w)
 int WhichWay(int set)
 {
 	debugLog(CACHEOPX, __func__, "Evicting");
+	if(associativity == 8) {
+		if (L2.set[set].PLRU[0] == 0){
+			if(L2.set[set].PLRU[2] == 0){
+				if(L2.set[set].PLRU[6] == 0)
+					return 7;
+				else
+					return 6;
+			}
+			else{
+				if(L2.set[set].PLRU[5] == 0)
+					return 5;
+				else
+					return 4;
+			}
+		}
+		else{
+			if(L2.set[set].PLRU[1] == 0){
+				if(L2.set[set].PLRU[4] == 0)
+					return 3;
+				else
+					return 2;
+			}
+			else{
+				if(L2.set[set].PLRU[3] == 0)
+					return 1;
+				else
+					return 0;
 
-	if (L2.set[set].PLRU[0] == 0){
-		if(L2.set[set].PLRU[2] == 0){
-			if(L2.set[set].PLRU[6] == 0)
-				return 7;
-			else
-				return 6;
+			}
 		}
-		else{
-			if(L2.set[set].PLRU[5] == 0)
-				return 5;
-			else
-				return 4;
-		}
-	}
-	else{
-		if(L2.set[set].PLRU[1] == 0){
-			if(L2.set[set].PLRU[4] == 0)
+	} else if(associativity == 4){
+		if (L2.set[set].PLRU[0] == 0){
+			if(L2.set[set].PLRU[1] == 0){
 				return 3;
-			else
+			}
+			else{
 				return 2;
+			}
 		}
 		else{
-			if(L2.set[set].PLRU[3] == 0)
+			if(L2.set[set].PLRU[1] == 0){
 				return 1;
-			else
+			}
+			else{
 				return 0;
 
+			}
 		}
+	} else {
+		debugLog(CACHEOP, __func__, "Not supported");
+		return -1;
 	}
 }
 
 void VoidWay(int way) {
-	debugLog(CACHEOP, __func__, "");
+	debugLog(CACHEOPX, __func__, "");
 	if (L2.set[set_index].way[way].valid == 1) {
 		if(op < 3) //Means Evicting
 			MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 		else {
+			// May be need to do this only in Shared state.
 			MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
 			MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
 		}
@@ -381,16 +414,16 @@ void UpdateMESIstateSnoop(int type, int way)
 			PutSnoopResult(addr,HIT);
 			//HitCount();
 			if(type == WRITE  || type == RWIM || type == INVALIDATE ){
-				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
+				L2.set[set_index].way[way].MESI_state = INVALID;
 			}
 			break;
 		case EXCLUSIVE:
 			PutSnoopResult(addr,HIT);
 			//HitCount();
 			if(type == RWIM || type == INVALIDATE ){
-				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
+				L2.set[set_index].way[way].MESI_state = INVALID;
 			} else if(type == READ){
 				L2.set[set_index].way[way].MESI_state = SHARED;
 			}
