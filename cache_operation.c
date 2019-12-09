@@ -340,7 +340,9 @@ void VoidWay(int way) {
 			MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 		else {
 			// May be need to do this only in Shared state.
-			MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
+			if(L2.set[set_index].way[way].MESI_state == MODEFIED) {
+				MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
+			}
 			MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
 		}
 		if(L2.set[set_index].way[way].dirty == 1) {
@@ -376,6 +378,7 @@ void UpdateMESIstate(int type, int way)
 			} else if(type == WRITE || type == RWIM){
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
 				BusOperation(RWIM, addr, GetSnoopResult(addr)); //Send readX command to bus
+				//First Time Write
 			}
 			break;
 		case SHARED:
@@ -384,11 +387,13 @@ void UpdateMESIstate(int type, int way)
 			} else {
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
 				BusOperation(INVALIDATE, addr, HITM); //Send BusUpgr command to bus
+				//First Time Write
 			}
 			break;
 		case EXCLUSIVE:
 			if(type == WRITE){
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
+				//First Time Write
 			} else if(type == READ){
 				MessageToCache(SENDLINE,addr);//Sends data to L1
 			}
@@ -432,11 +437,11 @@ void UpdateMESIstateSnoop(int type, int way)
 			PutSnoopResult(addr,HITM);
 			//HitModifiedLineCount();
 			if(type == READ) {
-				L2.set[set_index].way[way].MESI_state = SHARED;
 				Flush(way);
+				L2.set[set_index].way[way].MESI_state = SHARED;
 			} else if(type == RWIM || type == INVALIDATE ){
-				L2.set[set_index].way[way].MESI_state = INVALID;
 				VoidWay(way);
+				L2.set[set_index].way[way].MESI_state = INVALID;
 			}
 
 			break;
