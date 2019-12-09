@@ -119,7 +119,7 @@ void writeData(void)
 		}
 	}
 	if ( w == associativity){
-		readData();
+		readData();							//Should this increase any Counts?
 	} else {
 		HitCount();
 		UpdatePLRU(set_index,w);

@@ -83,6 +83,8 @@ int main(int argc ,char *argv[]) {
 
 	}
 	//Counters and Calculate the performance
+
+	trace_file = fopen(argv[1],"r");
 	CachePerformance();		//function call to Performance report
 	return EXIT_SUCCESS;
 }

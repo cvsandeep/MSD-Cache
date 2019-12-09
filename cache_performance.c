@@ -21,6 +21,8 @@ static int IreadHitCount, DreadHitCount, DwriteHitCount;
 static int IreadMissCount, DreadMissCount, DwriteMissCount;
 static int IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount;
 static int IreadCount, DreadCount, DwriteCount;
+int reads_parsed;
+int writes_parsed;
 
 void IReadCount(void)
 {
@@ -98,18 +100,57 @@ void EvictCount(void){
 		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+void parse_read_write(void){
+	while(UpdateTraceOperation()){
+		if(op == 0 || op == 2)
+			++reads_parsed;
+		else if(op == 1)
+			++writes_parsed;
+	}
+}
+
 void CachePerformance(void)
 {
-	sprintf(msgOut,"\t ReadI \t ReadD \t Write \t TOTAL");
-	debugLog(0, __func__, msgOut);
 	int TotalHitCount = IreadHitCount + DreadHitCount + DwriteHitCount;
 	int ToatalMissCount = IreadMissCount + DreadMissCount + DwriteMissCount;
 	int TotalEvictMissCount = IreadMissEvictCount + DreadMissEvictCount + DwriteMissEvictCount;
+	int TotalReadOperations = IreadCount + DreadCount;
+	int TotalWriteOperations = DwriteCount;
 	int TotalOperations = IreadCount + DreadCount + DwriteCount;
 
 	float hit_percentage = (TotalHitCount/(1.0*TotalOperations))*100;
 	float miss_percentage = (ToatalMissCount/(1.0*TotalOperations))*100;
 	float missEvict_percentage = (TotalEvictMissCount/(1.0*TotalOperations))*100;
+
+	parse_read_write();
+	if(reads_parsed == TotalReadOperations){
+		sprintf(msgOut,"Total Number of Reads = %d",TotalReadOperations);
+		debugLog(0, __func__, msgOut);
+	}
+	else{
+		sprintf(msgOut,"Total Number of Parsed Reads not equal to Read Operations");
+		debugLog(0, __func__, msgOut);
+		sprintf(msgOut,"Total Number of Reads = %d",TotalReadOperations);
+		debugLog(0, __func__, msgOut);
+		sprintf(msgOut,"Total Parsed Reads = %d",reads_parsed);
+		debugLog(0, __func__, msgOut);
+	}
+
+	if(writes_parsed == TotalWriteOperations){
+		sprintf(msgOut,"Total Number of Writes = %d",TotalWriteOperations);
+		debugLog(0, __func__, msgOut);
+	}
+	else{
+		sprintf(msgOut,"Total Number of Parsed Writes not equal to Write Operations");
+		debugLog(0, __func__, msgOut);
+		sprintf(msgOut,"Total Number of Writes = %d",TotalWriteOperations);
+		debugLog(0, __func__, msgOut);
+		sprintf(msgOut,"Total Parsed Write = %d",writes_parsed);
+		debugLog(0, __func__, msgOut);
+	}
+
+	sprintf(msgOut,"\t ReadI \t ReadD \t Write \t TOTAL");
+	debugLog(0, __func__, msgOut);
 
 	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d \t (%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
 	debugLog(0, __func__, msgOut);
@@ -129,6 +170,8 @@ void CachePerformance(void)
 	debugLog(0, __func__, "If we assume Hit time is 5 cycles & Miss time is 100 Cycles");
 	sprintf(msgOut,"Average Memory Access Time(AMAT) = %f cycles",AMAT);
 	debugLog(0, __func__, msgOut);
+
+
 
 	return;
 }

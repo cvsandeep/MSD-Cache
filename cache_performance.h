@@ -20,5 +20,7 @@ void HitCount(void);
 void MissCount(void);
 void EvictCount(void);
 
+void parse_read_write(void);
+
 void CachePerformance(void);
 
