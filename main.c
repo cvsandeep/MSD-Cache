@@ -77,7 +77,7 @@ int main(int argc ,char *argv[]) {
 				PrintCacheLine();
 				break;
 			default:
-				printf("Invalid");
+				printf("Invalid Operation\n");
 		}
 
 	}

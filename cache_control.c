@@ -14,7 +14,11 @@ int UpdateTraceOperation(void){
 	char line[256];
 
 	if(fgets(line, sizeof(line), trace_file) ){
-		op = (unsigned int) strtol(strtok(line," "), 0, 16);
+		if (line[0] == '\n'){
+			op = 10;
+		} else {
+			op = (unsigned int) strtol(strtok(line," "), 0, 16);
+		}
 		addr = (unsigned int) strtoul(strtok(0 ," "), 0, 16);
 		return 1;
 	} else {
