@@ -122,9 +122,10 @@ void CachePerformance(void)
 	float miss_percentage = (ToatalMissCount/(1.0*TotalOperations))*100;
 	float missEvict_percentage = (TotalEvictMissCount/(1.0*TotalOperations))*100;
 
+	debugLog(0, __func__, "");
 	parse_read_write();
 	if(reads_parsed == TotalReadOperations){
-		sprintf(msgOut,"Total Number of Reads = %d",TotalReadOperations);
+		sprintf(msgOut,"Total Number of Reads	      = %d",TotalReadOperations);
 		debugLog(0, __func__, msgOut);
 	}
 	else{
@@ -137,17 +138,26 @@ void CachePerformance(void)
 	}
 
 	if(writes_parsed == TotalWriteOperations){
-		sprintf(msgOut,"Total Number of Writes = %d",TotalWriteOperations);
+		sprintf(msgOut,"Total Number of Writes	      = %d",TotalWriteOperations);
 		debugLog(0, __func__, msgOut);
 	}
 	else{
 		sprintf(msgOut,"Total Number of Parsed Writes not equal to Write Operations");
 		debugLog(0, __func__, msgOut);
-		sprintf(msgOut,"Total Number of Writes = %d",TotalWriteOperations);
+		sprintf(msgOut,"Total Number of Writes   = %d",TotalWriteOperations);
 		debugLog(0, __func__, msgOut);
 		sprintf(msgOut,"Total Parsed Write = %d",writes_parsed);
 		debugLog(0, __func__, msgOut);
 	}
+
+	sprintf(msgOut,"Total Number of Cache hits   = %d",TotalHitCount);
+	debugLog(0, __func__, msgOut);
+
+	sprintf(msgOut,"Total Number of Cache misses = %d",(ToatalMissCount+TotalEvictMissCount));
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"Cache Hit ratio              = %03.02f%c",hit_percentage,'%');
+	debugLog(0, __func__, msgOut);
+	debugLog(0, __func__, "");
 
 	sprintf(msgOut,"\t ReadI \t ReadD \t Write \t TOTAL");
 	debugLog(0, __func__, msgOut);
