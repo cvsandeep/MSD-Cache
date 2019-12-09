@@ -32,13 +32,13 @@ static char *dirty_str[] = { " ", "D"};
 
 void DecodeAddress(void){
 
-	int lines = log2(line_size);
-	int set = log2(sets);
+	unsigned int lines = log2(line_size);
+	unsigned int set = log2(sets);
 	tag = addr; set_index = addr; offset = addr;
 
 	offset = offset & ((1 << lines) -1);
 	set_index = set_index >> lines & ((1<< set) -1);
-	tag = tag >> (lines + set) & ((1<< (32-lines+set)) -1);
+	tag = tag >> (lines + set) & ((1<< (32-(lines+set))) -1);
 	debugLog(CACHEOP,__func__,"*******************************************************************");
 	sprintf(msgOut, "Address 0x%x ; Offset 0x%x; set_index 0x%x; tag 0x%x  ",addr,offset,set_index,tag);
 	debugLog(CACHEOP,__func__, msgOut);
@@ -302,14 +302,14 @@ int WhichWay(int set)
 }
 
 void VoidWay(int way) {
-	debugLog(CACHEOPX, __func__, "");
+	debugLog(CACHEOP, __func__, "");
 	if (L2.set[set_index].way[way].valid == 1) {
-		//Getting the line from L1 to check weather its dirty or not
-		if(op < 3) //Means Evicting
-			MessageToCache(GETLINE,L2.set[set_index].way[way].tag);
-		MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
 		if(op < 3) //Means Evicting
 			MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
+		else {
+			MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
+			MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
+		}
 		if(L2.set[set_index].way[way].dirty == 1) {
 			Flush(way);
 		}
@@ -321,8 +321,9 @@ void VoidWay(int way) {
 }
 
 void Flush(int way) {
-	debugLog(CACHEOPX, __func__, "");
+	debugLog(CACHEOP, __func__, "");
 	BusOperation(WRITE, addr, HITM);
+	L2.set[set_index].way[way].dirty = 0;
 }
 
 void UpdateMESIstate(int type, int way)

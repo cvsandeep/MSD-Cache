@@ -15,7 +15,7 @@ int UpdateTraceOperation(void){
 
 	if(fgets(line, sizeof(line), trace_file) ){
 		op = (unsigned int) strtol(strtok(line," "), 0, 16);
-		addr = (unsigned int) strtol(strtok(0 ," "), 0, 16);
+		addr = (unsigned int) strtoul(strtok(0 ," "), 0, 16);
 		return 1;
 	} else {
 		fclose(trace_file);
