@@ -372,13 +372,13 @@ int WhichWay(int set)
 void VoidWay(int way) {
 	debugLog(CACHEOPX, __func__, "");
 	if (L2.set[set_index].way[way].valid == 1) {
+		if(L2.set[set_index].way[way].MESI_state == MODEFIED) {
+			MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
+		}
 		if(op < 3) //Means Evicting
 			MessageToCache(EVICTLINE,L2.set[set_index].way[way].tag);
 		else {
 			// May be need to do this only in Shared state.
-			if(L2.set[set_index].way[way].MESI_state == MODEFIED) {
-				MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
-			}
 			MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
 		}
 		if(L2.set[set_index].way[way].dirty == 1) {
