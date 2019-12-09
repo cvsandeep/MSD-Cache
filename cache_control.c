@@ -32,7 +32,6 @@ void UpdateConfig(void){
 	char msgOut[1024];
 
 	while(fgets(line, sizeof(line), config_file)){
-		//printf("%s\n",line);
 		config = strtok(line," ");
 		if(strcmp(config,"debug") == 0){
 			debug = (unsigned int) strtol(strtok(0 ," "), 0, 0);

@@ -24,12 +24,19 @@
 #include <math.h>
 #include "cache_performance.h"
 
+/*
+ * Global private variables used only for cache operation
+ */
 unsigned int tag, set_index, offset;
-extern unsigned int cache_lines, associativity,sets,line_size, op;
+extern unsigned int associativity,sets,line_size, op;
 char msgOut[2048];
 static char *MesiState[] = { "I", "S", "E", "M"};
 static char *dirty_str[] = { " ", "D"};
 
+/*
+ * This decodes the address and identifies offset, set index and tag
+ * Which will be used globally for cache operations
+ */
 void DecodeAddress(void){
 
 	unsigned int lines = log2(line_size);
@@ -45,6 +52,9 @@ void DecodeAddress(void){
 	debugLog(CACHEOP,__func__,"*******************************************************************");
 }
 
+/*
+ * Allocating the size of cache as per the config file.
+ */
 void ReIntializeCache(void){
 	debugLog(CACHEOPX,__func__,"");
 	L2.set = malloc(sizeof(struct CACHE_SET_8_WAY)*sets);
@@ -54,7 +64,11 @@ void ReIntializeCache(void){
 			}
 		}
 }
-// Level 1
+
+/*
+ * Do read/(read for write) request from L1 data/Instruction cache
+ * And fills the cahce line
+ */
 void readData(void)
 {
 	int evict = 1, way=0;
@@ -105,6 +119,10 @@ void readData(void)
 	UpdatePLRU(set_index,way);
 }
 
+/*
+ * Performs the write request from L1 data cache
+ * If data not fount in the set it do read operation
+ */
 void writeData(void)
 {
 	int w;
@@ -128,6 +146,9 @@ void writeData(void)
 	}
 }
 
+/*
+ * Performs read request from L1 instruction cache
+ */
 void ReadInstruction(void)
 {
 	debugLog(2,__func__,"");
@@ -195,6 +216,9 @@ void SnoopedReadX(void)
 	debugLog(CACHEOPX, __func__, "Data not Found");
 }
 
+/*
+ *  Clear and reset all the states invalidates all the lines and the sets
+ */
 void ClearAndSet(void)
 {
 	debugLog(CACHEOPX, __func__, "");
@@ -210,6 +234,9 @@ void ClearAndSet(void)
 
 }
 
+/*
+ * Prints all the information of sets in the cache.
+ */
 void PrintCacheLine(void)
 {
 	char buf[2048];
@@ -239,7 +266,10 @@ void PrintCacheLine(void)
 	}
 }
 
-
+/*
+ * This is called during write and read for updating PLRU bits
+ * for 4 an d8 way associative only
+ */
 void UpdatePLRU(int set, int w)
 {
 	char buf[2048];
@@ -276,9 +306,12 @@ void UpdatePLRU(int set, int w)
 	debugLog(CACHEOPX,__func__, msgOut);
 }
 
+/*
+ * This is called to find which way we need to evict
+ */
 int WhichWay(int set)
 {
-	debugLog(CACHEOPX, __func__, "Evicting");
+	debugLog(CACHEOP, __func__, "Evicting");
 	if(associativity == 8) {
 		if (L2.set[set].PLRU[0] == 0){
 			if(L2.set[set].PLRU[2] == 0){
@@ -333,6 +366,9 @@ int WhichWay(int set)
 	}
 }
 
+/*
+ * This is used for invalidating or evicting the way
+ */
 void VoidWay(int way) {
 	debugLog(CACHEOPX, __func__, "");
 	if (L2.set[set_index].way[way].valid == 1) {
@@ -355,12 +391,20 @@ void VoidWay(int way) {
 	L2.set[set_index].way[way].tag = 0;
 }
 
+/*
+ * This is used when flush data is required.
+ * Flushes the data to the DRAM through bus.
+ */
 void Flush(int way) {
 	debugLog(CACHEOP, __func__, "");
 	BusOperation(WRITE, addr, HITM);
 	L2.set[set_index].way[way].dirty = 0;
 }
 
+/*
+ * This is used to update the MESI state for all the transactions
+ * And also performs relevant bus operation.
+ */
 void UpdateMESIstate(int type, int way)
 {
 	int state = L2.set[set_index].way[way].MESI_state;
@@ -402,12 +446,17 @@ void UpdateMESIstate(int type, int way)
 			if(type == READ){
 				MessageToCache(SENDLINE,addr);//Sends data to L1
 			}
+			//Write dosent happens as L1 can only be in Exclusive or shared state when L2 is in modefied state.
 			break;
 	}
 	sprintf(msgOut, "%s->%s",MesiState[state],MesiState[L2.set[set_index].way[way].MESI_state]);
 	debugLog(CACHEOP,__func__, msgOut);
 }
 
+/*
+ * This is used to update the MESI state for all the snoop requests
+ * And also invalidates and flush when required.
+ */
 void UpdateMESIstateSnoop(int type, int way)
 {
 	int state = L2.set[set_index].way[way].MESI_state;

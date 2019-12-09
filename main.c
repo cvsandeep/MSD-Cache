@@ -3,19 +3,25 @@
  ********* Simulate L2 unified cache ******
  * main .c
  * 
- *  Author: Team
+ *  Author: Team 2
  *
  *
  ******************************************/
 
 #include <stdio.h>
-#include <math.h>
+//#include <math.h>
 #include "cache_operation.h"
 #include "cache_performance.h"
 
+/*
+ * External variables which are controlled in main.
+ */
 extern FILE *trace_file, *config_file;
 extern unsigned int op;
 
+/*
+ * Main project call
+ */
 int main(int argc ,char *argv[]) {
 	//debugLog(0, "Function Name", "Messages\n");
 	if (argc < 2) {
@@ -36,13 +42,6 @@ int main(int argc ,char *argv[]) {
 
 	UpdateConfig();
 	ReIntializeCache();
-	//L2.set->way = malloc(sizeof(struct  CACHE_LINE) * associativity);
-	//L2.set->PLRU = malloc(sizeof(struct  int) *7);
-	//Info to use structures
-	//struct CACHE_LINE w0[4];
-	//Iterate through ways from 0 t0 sizeof(w0)/sizeof(struct CACHE_LINE)
-	//printf("Number of CACHE_LINE=%d",sizeof(w0)/sizeof(struct CACHE_LINE));
-	//printf("Number of offsets in CACHE_LINE=%d",sizeof(w0[0].offset)/sizeof(int));
 
 	while(UpdateTraceOperation()){
 		DecodeAddress();
@@ -82,8 +81,6 @@ int main(int argc ,char *argv[]) {
 		}
 
 	}
-	//Counters and Calculate the performance
-
 	trace_file = fopen(argv[1],"r");
 	CachePerformance();		//function call to Performance report
 	return EXIT_SUCCESS;

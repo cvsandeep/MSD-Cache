@@ -12,18 +12,16 @@
 #include "cache_operation.h"
 
 char msgOut[1024];
-//static int IreadCount, DreadCount, IwriteCount, DwriteCount, IwriteMissCount,DwriteMissCount;;
-//static int IreadHitCount, DreadHitCount, IreadMissCount, DreadMissCount,IwriteHitCount, DwriteHitCount,IhitCount, DhitCount, IreadMissEvictCount, DreadMissEvictCount, IwriteMissEvictCount, DwriteMissEvictCount, ImissCount, DmissCount, IhitModifiedLineCount, DhitModifiedLineCount, Imiss_evict, Dmiss_evict;
-//float hit_percentage, hit_modified_percentage,miss_evict_percentage,miss_percentage;
-//static int writeMissCount;
 
 static int IreadHitCount, DreadHitCount, DwriteHitCount;
 static int IreadMissCount, DreadMissCount, DwriteMissCount;
 static int IreadMissEvictCount, DreadMissEvictCount, DwriteMissEvictCount;
 static int IreadCount, DreadCount, DwriteCount;
-int reads_parsed;
-int writes_parsed;
+int reads_parsed, writes_parsed;
 
+/*
+ * Instruction read counter
+ */
 void IReadCount(void)
 {
 	++IreadCount;
@@ -31,6 +29,9 @@ void IReadCount(void)
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+/*
+ * Data read counter
+ */
 void DReadCount(void)
 {
 	++DreadCount;
@@ -38,6 +39,9 @@ void DReadCount(void)
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+/*
+ * Data Write Counter
+ */
 void DWriteCount(void)
 {
 	++DwriteCount;
@@ -45,6 +49,9 @@ void DWriteCount(void)
 	debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+/*
+ * Different Hit counters based on operation.
+ */
 void HitCount(void){
 	switch(op){
 		case READ_DATA:
@@ -64,6 +71,9 @@ void HitCount(void){
 
 }
 
+/*
+ * Different Miss counters based on operation.
+ */
 void MissCount(void){
 	switch(op){
 			case READ_DATA:
@@ -82,6 +92,9 @@ void MissCount(void){
 		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+/*
+ * Different Evict counters based on operation.
+ */
 void EvictCount(void){
 	switch(op){
 			case READ_DATA:
@@ -100,6 +113,9 @@ void EvictCount(void){
 		debugLog(PERFORMANCE, __func__, msgOut);
 }
 
+/*
+ * Reopens the trace file for validating read and write counts
+ */
 void parse_read_write(void){
 	while(UpdateTraceOperation()){
 		if(op == 0 || op == 2)
@@ -109,6 +125,10 @@ void parse_read_write(void){
 	}
 }
 
+/*
+ * Calculates various counts and performance percentages
+ *
+ */
 void CachePerformance(void)
 {
 	int TotalHitCount = IreadHitCount + DreadHitCount + DwriteHitCount;
