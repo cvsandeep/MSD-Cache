@@ -397,6 +397,9 @@ void VoidWay(int way) {
  */
 void Flush(int way) {
 	debugLog(CACHEOP, __func__, "");
+	if(L2.set[set_index].way[way].MESI_state == MODEFIED) {
+		MessageToCache(GETLINE,L2.set[set_index].way[way].tag); //Getting the line from L1 to check weather its dirty or not
+	}
 	BusOperation(WRITE, addr, HITM);
 	L2.set[set_index].way[way].dirty = 0;
 }
@@ -418,12 +421,12 @@ void UpdateMESIstate(int type, int way)
 				} else if ( res == NOHIT) {
 					L2.set[set_index].way[way].MESI_state = EXCLUSIVE;
 				}
-				MessageToCache(SENDLINE,addr);//Sends data to L1
 			} else if(type == WRITE || type == RWIM){
 				L2.set[set_index].way[way].MESI_state = MODEFIED;
 				BusOperation(RWIM, addr, GetSnoopResult(addr)); //Send readX command to bus
 				//First Time Write
 			}
+			MessageToCache(SENDLINE,addr);//Sends data to L1
 			break;
 		case SHARED:
 			if(type == READ) {
