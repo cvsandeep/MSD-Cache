@@ -381,6 +381,7 @@ void VoidWay(int way) {
 			// May be need to do this only in Shared state.
 			MessageToCache(INVALIDATELINE,L2.set[set_index].way[way].tag);
 		}
+		L2.set[set_index].way[way].MESI_state = INVALID;
 		if(L2.set[set_index].way[way].dirty == 1) {
 			Flush(way);
 		}
