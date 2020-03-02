@@ -1,8 +1,8 @@
 /*
  * bus_operation.c
  *
- *  Created on: Nov 23, 2019
- *      Author: cvssa
+*   Created on: Feb 23, 2020
+ *      Author: Todd Townsend
  */
 
 #include "bus_operation.h"

@@ -1,4 +1,5 @@
-debug 0
+debug 1
+sets 256
 line_size 64
 associativity 8
-cache_lines 262144
+cache_lines 256

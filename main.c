@@ -3,7 +3,7 @@
  ********* Simulate L2 unified cache ******
  * main .c
  * 
- *  Author: Team 2
+ *  Author: Team
  *
  *
  ******************************************/

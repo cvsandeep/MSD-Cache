@@ -1,7 +1,7 @@
 /*
  * 	counters_&_performance.c
- *
- * 	Author: Todd
+ *   Created on: Feb 23, 2020
+ *      Author: Todd Townsend
  *
  *
  */
@@ -170,19 +170,25 @@ void CachePerformance(void)
 		debugLog(0, __func__, msgOut);
 	}
 
+	sprintf(msgOut,"Total Number Cache Accesses  = %d",(TotalHitCount + ToatalMissCount+TotalEvictMissCount));
+	debugLog(0, __func__, msgOut);
+
 	sprintf(msgOut,"Total Number of Cache hits   = %d",TotalHitCount);
 	debugLog(0, __func__, msgOut);
 
 	sprintf(msgOut,"Total Number of Cache misses = %d",(ToatalMissCount+TotalEvictMissCount));
 	debugLog(0, __func__, msgOut);
+
 	sprintf(msgOut,"Cache Hit ratio              = %03.02f%c",hit_percentage,'%');
+	debugLog(0, __func__, msgOut);
+	sprintf(msgOut,"Cache Miss ratio             = %03.02f%c",(missEvict_percentage + miss_percentage),'%');
 	debugLog(0, __func__, msgOut);
 	debugLog(0, __func__, "");
 
 	sprintf(msgOut,"\t ReadI \t ReadD \t Write \t TOTAL");
 	debugLog(0, __func__, msgOut);
 
-	sprintf(msgOut,"HITS :\t %d \t %d \t %d \t %d \t (%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
+	sprintf(msgOut,"HITS :\t %d %d \t %d \t %d (%03.02f%c)", IreadHitCount, DreadHitCount, DwriteHitCount, TotalHitCount,hit_percentage,'%');
 	debugLog(0, __func__, msgOut);
 
 
@@ -193,7 +199,7 @@ void CachePerformance(void)
 	debugLog(0, __func__, msgOut);
 
 
-	sprintf(msgOut,"TOTAL:\t %d \t %d \t %d \t %d", IreadCount, DreadCount, DwriteCount,TotalOperations);
+	sprintf(msgOut,"TOTAL:\t %d %d \t %d \t %d", IreadCount, DreadCount, DwriteCount,TotalOperations);
 	debugLog(0, __func__, msgOut);
 
 	float AMAT = (hit_percentage/100.0) * 5 + ((miss_percentage+missEvict_percentage)/100.0) * 100;

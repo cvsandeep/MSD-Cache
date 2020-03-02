@@ -2,7 +2,7 @@
  * logger.h
  *
  *  Created on: Nov 23, 2019
- *      Author: Todd N Townsend
+ *      Author: Team
  */
 #include <stdio.h>
 
