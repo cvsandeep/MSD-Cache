@@ -1,8 +1,8 @@
 /*
  * cache_operation.c
  *
- *   Created on: Feb 22, 2020
- *      Author: Todd Townsend
+ *  Created on: Nov 22, 2019
+ *      Author: sandeep
  */
 /*
  * 00 - Bus Operations
@@ -278,7 +278,7 @@ void UpdatePLRU(int set, int w)
 		sprintf(buf, "%d",L2.set[set].PLRU[plru]);
 		strcat(msgOut,buf);
 	}
-	if(associativity == 8 || associativity == 1){
+	if(associativity == 8)
 		switch(w){
 			case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 0; break;
 			case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; L2.set[set].PLRU[3] = 1; break;
@@ -289,21 +289,15 @@ void UpdatePLRU(int set, int w)
 			case 6: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 0; break;
 			case 7: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; L2.set[set].PLRU[6] = 1; break;
 		}
-	}
-	if(associativity == 4){
+
+	if(associativity == 4)
 		switch(w){
 			case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; break;
 			case 1: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 1; break;
 			case 2: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 0; break;
 			case 3: L2.set[set].PLRU[0] = 1; L2.set[set].PLRU[2] = 1; break;
 		}
-	}
-	if(associativity == 0){
-		switch(w){
-			case 0: L2.set[set].PLRU[0] = 0; L2.set[set].PLRU[1] = 0; break;
 
-			}
-	}
 	strcat(msgOut," Updated To ");
 	for(int plru =0 ; plru < 7; plru++){
 		sprintf(buf, "%d",L2.set[set].PLRU[plru]);

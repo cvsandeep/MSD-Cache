@@ -1,7 +1,6 @@
 /*
  * counters_&_performance.h
- *   Created on: Feb 23, 2020
- *      Author: Todd Townsend
+ *
  */
 
 #include <stdio.h>

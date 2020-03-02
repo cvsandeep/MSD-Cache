@@ -1,8 +1,8 @@
 /*
  * logger.c
  *
- *   Created on: Feb 22, 2020
- *      Author: Team
+ *  Created on: Nov 23, 2019
+ *      Author: Todd N Townsend
  */
 /*
  * 00 - Bus Operations
